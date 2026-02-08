@@ -6,6 +6,9 @@ TeXLive and Quarto are installed along with MyST and JupyterBook.
 
 Python 3.11 is installed with a conda environment called notebook that is activated on opening the container. R 4.5.X is installed and operates separate from the conda notebook environment (conda is not on the PATH when using R). R can be used from RStudio or JupyterLab and the same R environment is used.
 
+* [Python packages]()
+* [R packages]()
+
 ## Structure
 
 * The base infrastructure (Jupyter, Dask, Python install, conda env, R install, all the set ups around the user experience) are in [py-rocket-base](https://github.com/nmfs-opensci/py-rocket-base/). See the  [py-rocket-base documentation](https://nmfs-opensci.github.io/py-rocket-base/) for information on the base image structure and design.
