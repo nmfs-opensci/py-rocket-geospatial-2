@@ -13,7 +13,9 @@ USER root
 # Install Zotero; must be run before apt since apt install zotero requires this script be run first
 RUN wget -qO- https://raw.githubusercontent.com/retorquere/zotero-deb/master/install.sh | bash
 
+# Copy the repo files into /tmp (env-*.yml, install.R, etc)
 COPY . /tmp/
+
 # Update conda env sequentially to prevent hairy solve
 RUN /pyrocket_scripts/install-conda-packages.sh /tmp/env-core1.yml || (echo "install env-core1 failed" && exit 1)
 RUN /pyrocket_scripts/install-conda-packages.sh /tmp/env-core2.yml || (echo "install env-core2 failed" && exit 1)
@@ -35,7 +37,6 @@ RUN echo '.libPaths("/usr/local/lib/R/site-library")' > /etc/littler.r && \
     rm /etc/littler.r /tmp/rprofile.site
 
 # Any packages that have gdal dependency should be install after install_geospatial.sh is run
-COPY . /tmp/
 RUN /pyrocket_scripts/install-r-packages.sh /tmp/install.R || (echo "install-r-package.sh failed" && exit 1)
 
 # Install cwutils
