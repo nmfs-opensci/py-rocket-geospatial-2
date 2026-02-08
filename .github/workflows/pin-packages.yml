@@ -51,8 +51,8 @@ jobs:
           # Extract R packages with versions
           docker run --rm ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest \
             Rscript -e '
-          # Get installed packages from site-library
-          lib_path <- .libPaths()[1]
+          # Get installed packages from site-library (not user library)
+          lib_path <- "/usr/local/lib/R/site-library"
           packages <- installed.packages(lib.loc=lib_path)
           
           # Get CRAN repo URL (similar to install.R format)
