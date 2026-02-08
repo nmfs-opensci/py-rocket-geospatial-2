@@ -49,7 +49,7 @@ jobs:
             "$IMAGE" \
             Rscript .github/scripts/extract_pins_r.R \
               /usr/local/lib/R/site-library \
-              /work/packages-r-pinned.R
+              /tmp/packages-r-pinned.R
 
           echo "R packages extracted to packages-r-pinned.R"
           head -30 packages-r-pinned.R
