@@ -26,7 +26,7 @@ RUN /pyrocket_scripts/install-apt-packages.sh /tmp/apt.txt || (echo "install-apt
 RUN /pyrocket_scripts/install-desktop.sh /tmp/Desktop|| (echo "setup-desktop.sh failed" && exit 1)
 
 USER root
-# install the geospatial libraries and R spatial; the rocket script are part of py-rocket-base
+# install the geospatial libraries and R spatial; the rocker script is copied into py-rocket-base as part of that image build
 # need to ensure that it installs to the site-library (that user can control) and with a clean PATH
 # Ensure packages go to site-library whether installed via R, Rscript, or littler (r)
 RUN echo '.libPaths("/usr/local/lib/R/site-library")' > /etc/littler.r && \
@@ -36,7 +36,7 @@ RUN echo '.libPaths("/usr/local/lib/R/site-library")' > /etc/littler.r && \
     /rocker_scripts/install_geospatial.sh && \
     rm /etc/littler.r /tmp/rprofile.site
 
-# Any packages that have gdal dependency should be install after install_geospatial.sh is run
+# Any packages that have gdal dependency should be installed after install_geospatial.sh is run
 RUN /pyrocket_scripts/install-r-packages.sh /tmp/install.R || (echo "install-r-package.sh failed" && exit 1)
 
 # Install cwutils
