@@ -43,7 +43,8 @@ If the changes are core functionality, not scientific, put in an [issue in py-ro
 ### Package Pinning and Validation
 
 The repository automatically maintains pinned package versions with validation:
-- `packages-python-pinned.yaml` - Contains Python packages from py-rocket-base environment.yaml and environment/env-*.yml files with exact versions (not all 900+ conda packages)
+- `packages-python-pinned.yaml` - Contains Python packages from py-rocket-base environment.yaml and
+  environment/env-*.yml files with exact versions (not all 900+ conda packages)
   - Packages from py-rocket-base are listed first (including pangeo-notebook and pangeo-dask feedstocks)
   - Packages from environment/env-*.yml files are listed second
 - `packages-r-pinned.R` - Contains all R packages from the site-library with exact versions

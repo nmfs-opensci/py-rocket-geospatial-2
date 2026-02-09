@@ -245,7 +245,7 @@ def main():
     packages_by_file = parse_env_files(repo_root)
     
     if not packages_by_file:
-        print("Warning: No env-*.yml files found", file=sys.stderr)
+        print("Warning: No env-*.yml files found. Processing will continue with base packages only.", file=sys.stderr)
     
     print(f"Found {len(packages_by_file)} env files")
     
