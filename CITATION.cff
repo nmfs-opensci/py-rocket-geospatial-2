@@ -1,0 +1,28 @@
+cff-version: 1.2.0
+type: software
+title: "py-rocket-geospatial-2: a Docker image for Python–R Geospatial"
+authors:
+  - family-names: Holmes
+    given-names: Elizabeth Eli
+    orcid: "https://orcid.org/0000-0001-9128-8393"
+    affiliation: "NOAA Fisheries / University of Washington SAFS"
+url: "https://github.com/nmfs-opensci/py-rocket-geospatial-2"
+license: "Apache-2.0"
+abstract: >
+  The py-rocket-geospatial-2 Docker image is a geospatial, earth-science–oriented
+  scientific computing environment designed for large-scale data analysis in
+  JupyterHub deployments. It targets cloud-native and big-data workflows commonly
+  used in oceanography, climate science, hydrology, and remote sensing. The image
+  builds on design patterns from the Pangeo ecosystem and provides an integrated
+  Python and R environment optimized for array-based, spatiotemporal datasets and
+  scalable analysis.
+keywords:
+  - Docker
+  - JupyterHub
+  - JupyterLab
+  - Python
+  - R
+  - RStudio
+  - Geospatial
+  - Open Science
+  - Pangeo
