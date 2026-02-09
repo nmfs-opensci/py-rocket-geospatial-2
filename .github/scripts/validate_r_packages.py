@@ -58,23 +58,38 @@ def parse_install_geospatial_content(script_content: str) -> Set[str]:
     packages = set()
     
     # Find install2.r commands
-    # e.g., install2.r --error --skipmissing --skipinstalled -n "$NCPUS" \
-    #     RColorBrewer \
-    #     RandomFields \
-    #     ...
+    # The install2.r command spans multiple lines with backslash continuation
+    lines = script_content.split('\n')
+    in_install2r = False
     
-    # Look for install2.r command block
-    install2r_match = re.search(
-        r'install2\.r[^\n]*\n((?:\s+\S+\s*\\?\n?)+)',
-        script_content,
-        re.MULTILINE
-    )
-    
-    if install2r_match:
-        packages_block = install2r_match.group(1)
-        # Extract package names (lines with package names, ending with \ or newline)
-        pkg_lines = re.findall(r'\s+(\S+)\s*\\?', packages_block)
-        packages.update(pkg_lines)
+    for line in lines:
+        # Check if this line starts install2.r command
+        if 'install2.r' in line and not line.strip().startswith('#'):
+            in_install2r = True
+            continue
+        
+        # If we're in an install2.r block
+        if in_install2r:
+            stripped = line.strip()
+            # Empty line ends the block
+            if not stripped or stripped.startswith('#'):
+                in_install2r = False
+                continue
+            
+            # Extract package name (remove backslash if present)
+            pkg_name = stripped.rstrip('\\').strip()
+            
+            # Skip if it looks like a flag or empty or variable
+            if pkg_name and not pkg_name.startswith('-') and not pkg_name.startswith('$'):
+                # Stop if we hit something that looks like a new command
+                if any(cmd in pkg_name for cmd in ['R ', 'R\t', 'apt', 'set ', 'export', 'echo']):
+                    in_install2r = False
+                    continue
+                packages.add(pkg_name)
+            
+            # Check if line does NOT end with backslash (end of continuation)
+            if not stripped.endswith('\\'):
+                in_install2r = False
     
     # Find BiocManager::install() calls
     # e.g., R -e "BiocManager::install('rhdf5')"
