@@ -1,0 +1,10 @@
+## Package Validation: ✅ SUCCESS
+
+All Python packages from env-*.yml files are present in the container image.
+
+### Changes
+- **packages-python-pinned.yaml**: Updated with packages from env files only (not all 900+ conda packages)
+- **packages-r-pinned.R**: Updated with latest R package versions
+- **build.log**: Validation report
+
+Auto-generated from latest container image.
