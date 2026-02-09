@@ -25,8 +25,11 @@ jobs:
         version: ${{ github.event.release.tag_name }}
         zenodo_json: .zenodo.json   # optional if adding to an existing record in Zenodo
         archive: ${{ env.archive }}
+        doi: '10.5281/zenodo.18557656'
 
-        # Optional DOI for all versions. Leaving this blank (the default) will create
-        # a new DOI on every release. Use a DOI that represents all versions will
-        # create a new version for this existing DOI.
-        #doi: '10.5281/zenodo.6326822'
+        # Very first release will create the Zenodo entry. Comment out the doi: line
+        # After first release is successful, go to Zenodo and find the 'all releases' Doi
+        #   it is on the right under the single release DOI.continue-on-error: 
+        #   Copy that and up into doi: line . Like so
+        #   doi: '10.5281/zenodo.6326822'
+        # Without the doi: line, a new Zenodo entry will be produced for each release
