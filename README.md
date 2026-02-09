@@ -43,7 +43,9 @@ If the changes are core functionality, not scientific, put in an [issue in py-ro
 ### Package Pinning and Validation
 
 The repository automatically maintains pinned package versions with validation:
-- `packages-python-pinned.yaml` - Contains Python packages from environment/env-*.yml files with exact versions (not all 900+ conda packages)
+- `packages-python-pinned.yaml` - Contains Python packages from py-rocket-base environment.yaml and environment/env-*.yml files with exact versions (not all 900+ conda packages)
+  - Packages from py-rocket-base are listed first (including pangeo-notebook and pangeo-dask feedstocks)
+  - Packages from environment/env-*.yml files are listed second
 - `packages-r-pinned.R` - Contains all R packages from the site-library with exact versions
 - `build.log` - Validation report showing if all packages from env files and rocker scripts are present
 
@@ -51,8 +53,11 @@ The [Pin Package Versions workflow](.github/workflows/pin-packages.yml):
 - Runs automatically after each successful build
 - Can be manually triggered from the Actions tab
 - Extracts package versions from the published Docker image
-- **Filters Python packages** to only include those specified in environment/env-*.yml files
-- **Validates Python packages** that all packages from environment/env-*.yml files are present in the container
+- **Extracts py-rocket-base environment.yaml** from /srv/repo in the container image
+- **Filters Python packages** to only include those specified in:
+  - py-rocket-base environment.yaml (including pangeo-notebook and pangeo-dask feedstock packages)
+  - environment/env-*.yml files
+- **Validates Python packages** that all packages from py-rocket-base and environment/env-*.yml files are present in the container
 - **Validates R packages** that all packages from install.R, /rocker_scripts/install_geospatial.sh, and /rocker_scripts/install_tidyverse.sh are present in the container
 - Creates a PR with:
   - Updated pinned package files
