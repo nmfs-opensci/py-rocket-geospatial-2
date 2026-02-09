@@ -91,6 +91,7 @@ def parse_install_geospatial_content(script_content: str) -> Set[str]:
             # Skip if it looks like a flag or empty or variable
             if pkg_name and not pkg_name.startswith('-') and not pkg_name.startswith('$'):
                 # Stop if we hit something that looks like a new command (check at start of line)
+                # 'apt-' for apt-get, 'apt ' for apt install, etc.
                 if any(pkg_name.startswith(cmd) for cmd in ['R ', 'R\t', 'apt-', 'apt ', 'set ', 'export ', 'echo ']):
                     in_install2r = False
                     continue
