@@ -16,6 +16,15 @@ import re
 from pathlib import Path
 from typing import Set, Dict, List
 
+# Archived R packages that should be excluded from validation
+# These packages were archived on CRAN years ago and are no longer available
+ARCHIVED_PACKAGES = {
+    'RandomFields',  # Archived in 2022
+    'maptools',      # Archived in 2023
+    'rgdal',         # Archived in 2023
+    'rgeos',         # Archived in 2023
+}
+
 
 def parse_install_r(install_r_path: Path) -> Set[str]:
     """
@@ -81,8 +90,9 @@ def parse_install_geospatial_content(script_content: str) -> Set[str]:
             
             # Skip if it looks like a flag or empty or variable
             if pkg_name and not pkg_name.startswith('-') and not pkg_name.startswith('$'):
-                # Stop if we hit something that looks like a new command
-                if any(cmd in pkg_name for cmd in ['R ', 'R\t', 'apt', 'set ', 'export', 'echo']):
+                # Stop if we hit something that looks like a new command (check at start of line)
+                # 'apt-' for apt-get, 'apt ' for apt install, etc.
+                if any(pkg_name.startswith(cmd) for cmd in ['R ', 'R\t', 'apt-', 'apt ', 'set ', 'export ', 'echo ']):
                     in_install2r = False
                     continue
                 packages.add(pkg_name)
@@ -140,7 +150,8 @@ def read_pinned_packages(pinned_file: Path) -> Set[str]:
 
 def append_to_build_log(log_file: Path, success: bool, missing_packages: Set[str],
                        install_r_packages: Set[str], geospatial_packages: Set[str],
-                       tidyverse_packages: Set[str], total_expected: int, total_pinned: int):
+                       tidyverse_packages: Set[str], total_expected: int, total_pinned: int,
+                       excluded_packages: Set[str]):
     """
     Append R package validation results to build.log.
     """
@@ -154,6 +165,11 @@ def append_to_build_log(log_file: Path, success: bool, missing_packages: Set[str
         f.write(f"Packages in /rocker_scripts/install_geospatial.sh: {len(geospatial_packages)}\n")
         f.write(f"Packages in /rocker_scripts/install_tidyverse.sh: {len(tidyverse_packages)}\n")
         f.write(f"Total unique R packages expected: {total_expected}\n")
+        
+        if excluded_packages:
+            f.write(f"Archived packages excluded from validation: {len(excluded_packages)}\n")
+            f.write(f"  ({', '.join(sorted(excluded_packages))})\n")
+        
         f.write(f"Total packages in packages-r-pinned.R: {total_pinned}\n\n")
         
         if success:
@@ -163,6 +179,19 @@ def append_to_build_log(log_file: Path, success: bool, missing_packages: Set[str
             f.write("install_tidyverse.sh are present in packages-r-pinned.R.\n\n")
             f.write("The packages-r-pinned.R file contains all required packages\n")
             f.write("from the custom install.R and the rocker scripts.\n")
+            
+            if excluded_packages:
+                f.write("\nNote: The following archived packages were excluded from validation\n")
+                f.write("as they are no longer available on CRAN:\n")
+                for pkg in sorted(excluded_packages):
+                    sources = []
+                    if pkg in install_r_packages:
+                        sources.append("install.R")
+                    if pkg in geospatial_packages:
+                        sources.append("install_geospatial.sh")
+                    if pkg in tidyverse_packages:
+                        sources.append("install_tidyverse.sh")
+                    f.write(f"  - {pkg} (found in: {', '.join(sources)})\n")
         else:
             f.write("STATUS: FAILED\n")
             f.write("=" * 70 + "\n\n")
@@ -242,6 +271,17 @@ def main():
     all_expected_packages = install_r_packages | geospatial_packages | tidyverse_packages
     print(f"\nTotal unique R packages expected: {len(all_expected_packages)}")
     
+    # Identify archived packages that should be excluded from validation
+    excluded_packages = all_expected_packages & ARCHIVED_PACKAGES
+    if excluded_packages:
+        print(f"\nExcluding {len(excluded_packages)} archived packages from validation:")
+        for pkg in sorted(excluded_packages):
+            print(f"  - {pkg}")
+    
+    # Filter out archived packages from validation
+    all_expected_packages = all_expected_packages - ARCHIVED_PACKAGES
+    print(f"\nTotal packages to validate (after exclusions): {len(all_expected_packages)}")
+    
     # Read pinned packages
     print(f"\nReading {pinned_file.name}...")
     pinned_packages = read_pinned_packages(pinned_file)
@@ -257,7 +297,8 @@ def main():
     print(f"\nAppending R validation results to {log_file.name}...")
     append_to_build_log(log_file, success, missing_packages,
                        install_r_packages, geospatial_packages, tidyverse_packages,
-                       len(all_expected_packages), len(pinned_packages))
+                       len(all_expected_packages) + len(excluded_packages), len(pinned_packages),
+                       excluded_packages)
     
     # Print results
     print("\n" + "=" * 70)
@@ -266,12 +307,16 @@ def main():
         print("=" * 70)
         print(f"\nAll {len(all_expected_packages)} expected R packages are present")
         print(f"in {pinned_file.name}")
+        if excluded_packages:
+            print(f"\n({len(excluded_packages)} archived packages were excluded from validation)")
         print(f"\nSee {log_file.name} for full report")
         sys.exit(0)
     else:
         print("FAILED: Some R packages are missing")
         print("=" * 70)
         print(f"\n{len(missing_packages)} R packages not found in {pinned_file.name}")
+        if excluded_packages:
+            print(f"({len(excluded_packages)} archived packages were excluded from validation)")
         print(f"\nSee {log_file.name} for details")
         sys.exit(0)  # Exit 0 so workflow continues to create PR
 
