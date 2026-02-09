@@ -3,8 +3,6 @@
 [![Build and Push](https://github.com/nmfs-opensci/py-rocket-geospatial-2/actions/workflows/build-and-push.yml/badge.svg)](https://github.com/nmfs-opensci/py-rocket-geospatial-2/actions/workflows/build-and-push.yml)
 [![ghcr.io](https://img.shields.io/badge/ghcr.io-container--images%2Fpy--rocket--geospatial--2-blue?logo=docker)](https://github.com/nmfs-opensci/container-images/pkgs/container/container-images%2Fpy-rocket-geospatial-2)
 
-**Latest version:** `2026.02.08`
-
 ```bash
 docker pull ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest
 docker run -it --rm -p 8888:8888 ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest
@@ -16,16 +14,22 @@ TeXLive and Quarto are installed along with MyST and JupyterBook.
 
 Python 3.11 is installed with a conda environment called notebook that is activated on opening the container. R 4.5.X is installed and operates separate from the conda notebook environment (conda is not on the PATH when using R). R can be used from RStudio or JupyterLab and the same R environment is used.
 
-* [Python packages (source env files)](environment/env-core1.yml)
+## Structure
+
+* The base infrastructure (Jupyter, Dask, Python install, conda env, R install, all the set ups around the user experience) are in [py-rocket-base](https://github.com/nmfs-opensci/py-rocket-base/) which is the base image in the Dockerfile. See the  [py-rocket-base documentation](https://nmfs-opensci.github.io/py-rocket-base/) for information on the base image structure and design.
+* py-rocket-geospatial-2 the Python scientific core packages and Python and R geospatial packages. Note the R core scientific packages are in py-rocket-base since rocker_verse is the base R.
+* py-rocket-geospatial-2 also installs QGIS, CoastWatch Utilities, and Panoply.
+
+#### py-rocket-geospatial-2 files that determine the image packages
+* [Dockerfile](Dockerfile)
+* [Python packages (source env files)](environment)
 * [R packages (source install file)](install.R)
+* [system packages](apt.txt)
+
+#### Package pins in the image
 * [Pinned Python packages](packages-python-pinned.yaml) - Auto-generated list of all Python packages with pinned versions
 * [Pinned R packages](packages-r-pinned.R) - Auto-generated list of all R packages with pinned versions
 
-## Structure
-
-* The base infrastructure (Jupyter, Dask, Python install, conda env, R install, all the set ups around the user experience) are in [py-rocket-base](https://github.com/nmfs-opensci/py-rocket-base/). See the  [py-rocket-base documentation](https://nmfs-opensci.github.io/py-rocket-base/) for information on the base image structure and design.
-* py-rocket-geospatial-2 the Python scientific core packages and Python and R geospatial packages. Note the R core scientific packages are in py-rocket-base since rocker_verse is the base R.
-* py-rocket-geospatial-2 also installs QGIS, CoastWatch Utilities, and Panoply.
 
 ## Customizing py-rocket-geospatial-2
 
