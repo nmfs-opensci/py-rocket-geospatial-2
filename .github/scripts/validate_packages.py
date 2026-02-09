@@ -130,8 +130,11 @@ def main():
             print(f"    Found in: {', '.join(sources)}")
         
         print(f"\nTotal missing packages: {len(missing_packages)}")
-        print("\nPlease ensure these packages are installed in the container image")
-        print("or remove them from the env files if they're not needed.")
+        print("\nTo resolve this issue:")
+        print("  1. If these packages should be in the container image, rebuild the")
+        print("     container and run the 'Pin Package Versions' workflow to update")
+        print("     packages-python-pinned.yaml")
+        print("  2. If these packages are not needed, remove them from the env-*.yml files")
         print("=" * 70)
         sys.exit(1)
     else:
