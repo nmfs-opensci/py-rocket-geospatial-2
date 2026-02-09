@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: write
+  pull-requests: write
 
 jobs:
   pin-packages:
@@ -52,7 +53,7 @@ jobs:
           echo "R packages extracted to packages-r-pinned.R"
           head -30 packages-r-pinned.R
 
-      - name: Commit and push changes
+      - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
@@ -61,8 +62,19 @@ jobs:
 
           if ! git diff --staged --quiet; then
             git commit -m "Update pinned package versions from container image"
-            git push
-            echo "Changes committed and pushed successfully"
           else
             echo "No changes to commit"
           fi
+
+      - name: Create Pull Request
+        if: ${{ !cancelled() }}
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ci/update-pins
+          delete-branch: true
+          title: "Update pinned package versions"
+          body: "Auto-generated from latest container image."
+          assignees: eeholmes
+          reviewers: eeholmes
+          commit-message: "Update pinned package versions from container image"
