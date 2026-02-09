@@ -1,3 +1,25 @@
+======================================================================
+Python Package Validation Report
+======================================================================
+
+Total packages from py-rocket-base: 10
+Total unique packages in env-*.yml files: 93
+Total packages in filtered packages-python-pinned.yaml: 103
+
+STATUS: SUCCESS
+======================================================================
+
+All Python packages from py-rocket-base environment.yaml and
+env-*.yml files are present in the container image and have been
+pinned in packages-python-pinned.yaml.
+
+The pinned file includes:
+  - Packages from py-rocket-base (including pangeo-notebook and pangeo-dask)
+  - Packages from environment/env-*.yml files
+
+Not all 900+ packages from the conda environment are included.
+
+======================================================================
 
 
 ======================================================================
@@ -6,8 +28,8 @@ R Package Validation Report
 
 Packages in install.R: 64
 Packages in /rocker_scripts/install_geospatial.sh: 32
-Packages in /rocker_scripts/install_tidyverse.sh: 0
-Total unique R packages expected: 96
+Packages in /rocker_scripts/install_tidyverse.sh: 17
+Total unique R packages expected: 112
 Archived packages excluded from validation: 4
   (RandomFields, maptools, rgdal, rgeos)
 Total packages in packages-r-pinned.R: 418
