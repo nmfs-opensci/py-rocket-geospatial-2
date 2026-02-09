@@ -1,36 +1,110 @@
 #! /usr/local/bin/Rscript
 # install R dependencies
 
-# to match rocker/verse:4.4 used in py-rocker-base
-# look up the CRAN env set in the Dockerfile used
+# CRAN binaries repo (from image build)
 repo <- "https://p3m.dev/cran/__linux__/noble/2025-10-30"
 
-# Check if the first library path is inside /home
+# Guardrail: don’t install into /home in the Docker build context
 install_lib <- .libPaths()[1]
 if (grepl("^/home", install_lib)) {
-  stop("Error: Packages are being installed to /home, which will be removed in the final image. Exiting.", call. = FALSE)
+  stop(
+    "Error: Packages are being installed to /home, which will be removed in the final image. Exiting.",
+    call. = FALSE
+  )
 }
 
-install.packages(c("rstac", "quarto", "aws.s3", "reticulate", "gdalcubes", "rnaturalearth", "earthdatalogin"), repos=repo)
-install.packages("rnaturalearthdata", repos=repo)
+# Main R ecosystem installed via rocker scripts: https://github.com/rocker-org/rocker-versioned2/scripts
+# Tidyverse packages are installed via install_tidyverse.sh
+# Geospatial packages are installed via install_geospatial.sh
 
-# CoastWatch required
-list.of.packages <- c("parsedate", "reshape2", "gridGraphics", "PBSmapping",   
-                      "date", "openair", "cmocean", "plotdap", "rerddapXtracto")
-install.packages(list.of.packages, repos=repo)
+# Extra packages added or ensured to be present
 
-# -------  OceanHackWeek R image customizations ------- 
-
-# TODO: Group into high-level (eg, sfnetworks, oce, robis) vs low-level and narrow (eg, akima, mda)
-list.of.packages_ohw <- c(
-    "plot.matrix", "isdparser", "geonames", "readHAC", 
-    "greybox", "sfnetworks", "smooth", "oce", "ocedata",
-    "akima", "ape", "biomod2", "caret", "caTools", "CircStats", "corrplot", "cowplot", 
-    "dismo", "doParallel", "earth", "fields", "forecast", "ggspatial", "glmnet", "hexbin",
-    "kableExtra", "latticeExtra", "lmtest", "mapplots", "marmap", "matrixStats", "mda", "metR", 
-    "palmerpenguins", "plotly", "rasterVis", "robis", "rosm", "tseries", "tsibble", "udunits2", "urca", "vioplot"
+# ------------------------------------------------------------
+# 1) Core plumbing + data access + interoperability
+# ------------------------------------------------------------
+list.of.packages <- c(
+  "quarto",
+  "reticulate",
+  "aws.s3",
+  "earthdatalogin",
+  "rstac",
+  "geonames",
+  "isdparser",
+  "readHAC",
+  "parsedate"
 )
-install.packages(list.of.packages_ohw, repos=repo)
+install.packages(list.of.packages, repos = repo)
+
+# ------------------------------------------------------------
+# 2) Geospatial + mapping + earth/ocean data utilities
+# ------------------------------------------------------------
+list.of.packages <- c(
+  "gdalcubes",
+  "rnaturalearth",
+  "rnaturalearthdata",
+  "PBSmapping",
+  "ggspatial",
+  "rosm",
+  "sfnetworks",
+  "marmap",
+  "robis",
+  "oce",
+  "ocedata",
+  "plotdap",
+  "rerddapXtracto",
+  "openair",
+  "cmocean"
+)
+install.packages(list.of.packages, repos = repo)
+
+# ------------------------------------------------------------
+# 3) Data wrangling + visualization + reporting
+# ------------------------------------------------------------
+list.of.packages <- c(
+  "reshape2",
+  "gridGraphics",
+  "matrixStats",
+  "plot.matrix",
+  "corrplot",
+  "cowplot",
+  "hexbin",
+  "kableExtra",
+  "latticeExtra",
+  "mapplots",
+  "metR",
+  "plotly",
+  "rasterVis",
+  "vioplot"
+)
+install.packages(list.of.packages, repos = repo)
+
+# ------------------------------------------------------------
+# 4) Modeling + time series + statistical tooling
+# ------------------------------------------------------------
+list.of.packages <- c(
+  "caret",
+  "biomod2",
+  "glmnet",
+  "doParallel",
+  "earth",
+  "fields",
+  "dismo",
+  "caTools",
+  "mda",
+  "ape",
+  "CircStats",
+  "palmerpenguins",
+  "forecast",
+  "lmtest",
+  "tseries",
+  "tsibble",
+  "urca",
+  "akima",
+  "smooth",
+  "greybox",
+  "udunits2"
+)
+install.packages(list.of.packages, repos = repo)
 
 # TODO: Should they include upgrade=FALSE? eeh: yes to prevent the dependencies from upgrading.
 remotes::install_github("hvillalo/echogram", upgrade=FALSE)
