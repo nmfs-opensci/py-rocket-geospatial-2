@@ -1,10 +1,7 @@
 # py-rocket-geospatial-2
 
 [![Build and Push](https://github.com/nmfs-opensci/py-rocket-geospatial-2/actions/workflows/build-and-push.yml/badge.svg)](https://github.com/nmfs-opensci/py-rocket-geospatial-2/actions/workflows/build-and-push.yml)
-[![ghcr.io](https://img.shields.io/badge/ghcr.io-container--images%2Fpy--rocket--geospatial--2-blue?logo=docker)](https://github.com/nmfs-opensci/container-images/pkgs/container/container-images%2Fpy-rocket-geospatial-2)
-
-**Stable Version:** 2025.12.23  
-**Dev Version:** 2026.02.08  
+[![ghcr.io](https://img.shields.io/badge/ghcr.io-container--images%2Fpy--rocket--geospatial--2-blue?logo=docker)](https://github.com/nmfs-opensci/container-images/pkgs/container/container-images%2Fpy-rocket-geospatial-2) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18557656.svg)](https://doi.org/10.5281/zenodo.18557656)   [![GitHub Release](https://img.shields.io/github/v/release/nmfs-opensci/py-rocket-geospatial-2)](https://github.com/nmfs-opensci/py-rocket-geospatial-2/releases)
 
 ```bash
 docker pull ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest
