@@ -138,7 +138,7 @@ Users can create derivative images using this as a base. When helping with deriv
 
 ## Additional Context
 
-- This repository moved from [nmfs-opensci/container-images](https://github.com/nmfs-opensci/container-images) to a dedicated repo in February 2026
+- This repository moved from [nmfs-opensci/container-images](https://github.com/nmfs-opensci/container-images) to a dedicated repo on 2026-02-07
 - The Python environment is based on Pangeo/CryoCloud patterns for cloud-native geospatial analysis
 - The R environment follows Rocker project conventions
 - Documentation for the base image: https://nmfs-opensci.github.io/py-rocket-base/
