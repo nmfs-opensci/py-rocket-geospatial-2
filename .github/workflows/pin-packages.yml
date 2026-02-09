@@ -69,6 +69,17 @@ jobs:
           echo "R packages extracted to packages-r-pinned.R"
           head -30 packages-r-pinned.R
 
+      - name: Validate R packages
+        run: |
+          IMAGE=ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest
+
+          # Extract install_geospatial.sh content from the container and pass to validation script
+          docker run --rm "$IMAGE" cat /rocker_scripts/install_geospatial.sh | \
+            python .github/scripts/validate_r_packages.py
+
+          echo "R package validation complete. Check build.log for results."
+          cat build.log
+
       - name: Commit changes
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
@@ -85,17 +96,21 @@ jobs:
       - name: Set PR body based on validation results
         id: pr_body
         run: |
-          if grep -q "STATUS: SUCCESS" build.log; then
+          # Count SUCCESS statuses in build.log (should be 2: one for Python, one for R)
+          success_count=$(grep -c "STATUS: SUCCESS" build.log || true)
+          
+          if [ "$success_count" -eq 2 ]; then
             echo "status=success" >> $GITHUB_OUTPUT
             cat > pr_body.txt << 'EOF'
           ## Package Validation: ✅ SUCCESS
 
-          All Python packages from env-*.yml files are present in the container image.
+          All Python packages from env-*.yml files and all R packages from install.R
+          and install_geospatial.sh are present in the container image.
 
           ### Changes
           - **packages-python-pinned.yaml**: Updated with packages from env files only (not all 900+ conda packages)
-          - **packages-r-pinned.R**: Updated with latest R package versions
-          - **build.log**: Validation report
+          - **packages-r-pinned.R**: Updated with latest R package versions from site-library
+          - **build.log**: Validation report for both Python and R packages
 
           Auto-generated from latest container image.
           EOF
@@ -104,12 +119,12 @@ jobs:
             cat > pr_body.txt << 'EOF'
           ## Package Validation: ⚠️ FAILED
 
-          Some packages in env-*.yml files were NOT found in the container image.
+          Some packages were NOT found in the container image. Check build.log for details.
 
           ### Changes
           - **packages-python-pinned.yaml**: Updated with subset of packages that were successfully installed
           - **packages-r-pinned.R**: Updated with latest R package versions
-          - **build.log**: Detailed report of missing packages
+          - **build.log**: Detailed report of missing packages (both Python and R)
 
           **Action Required:** Review build.log for missing packages and investigate installation issues.
 
