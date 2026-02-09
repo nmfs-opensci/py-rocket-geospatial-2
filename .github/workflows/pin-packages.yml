@@ -42,15 +42,13 @@ jobs:
       - name: Extract R packages with pinned versions
         run: |
           IMAGE=ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest
-
-          # Write output into the repo workspace (mounted at /work inside container)
+        
           docker run --rm \
             -v "$PWD:/work" -w /work \
             "$IMAGE" \
-            Rscript .github/scripts/extract_pins_r.R \
-              /usr/local/lib/R/site-library \
-              /tmp/packages-r-pinned.R
-
+            Rscript .github/scripts/extract_pins_r.R /usr/local/lib/R/site-library \
+            > packages-r-pinned.R
+        
           echo "R packages extracted to packages-r-pinned.R"
           head -30 packages-r-pinned.R
 
