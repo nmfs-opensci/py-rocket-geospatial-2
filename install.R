@@ -33,8 +33,7 @@ list.of.packages <- c(
   "readHAC",
   "parsedate",
   "tigris",
-  "mirai",
-  "zarr"
+  "mirai" #, "zarr" # add when upgrade to R. Came out in Feb 2026
 )
 install.packages(list.of.packages, repos = repo)
 
