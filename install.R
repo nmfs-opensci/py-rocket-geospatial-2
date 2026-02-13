@@ -33,9 +33,10 @@ list.of.packages <- c(
   "readHAC",
   "parsedate",
   "tigris",
-  "mirai" #, "zarr" # add when upgrade to R. Came out in Feb 2026
+  "mirai"
 )
 install.packages(list.of.packages, repos = repo)
+# "zarr"  add when upgrade to R. Came out in Feb 2026
 
 # ------------------------------------------------------------
 # 2) Geospatial + mapping + earth/ocean data utilities
