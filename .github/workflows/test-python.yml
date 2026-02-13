@@ -33,21 +33,12 @@ jobs:
 
       - name: Run Python xarray test notebook
         run: |
+          echo "Running test notebook..."
           docker run --rm \
             -v "$PWD/tests:/tests" \
             ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest \
             bash -c "jupyter nbconvert --to notebook --execute /tests/test-python-xarray.ipynb --output /tests/test-python-xarray-output.ipynb"
-
-      - name: Display test results
-        if: always()
-        run: |
-          if [ -f tests/test-python-xarray-output.ipynb ]; then
-            echo "✓ Notebook executed successfully"
-            echo "Output saved to tests/test-python-xarray-output.ipynb"
-          else
-            echo "✗ Notebook execution failed"
-            exit 1
-          fi
+          echo "✓ Notebook executed successfully"
 
       - name: Upload test results
         if: always()
