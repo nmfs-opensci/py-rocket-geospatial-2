@@ -1,0 +1,58 @@
+name: Test Python Notebooks
+
+on:
+  workflow_dispatch:
+  workflow_run:
+    workflows: ["Docker Image Build and Push"]
+    types:
+      - completed
+
+permissions:
+  contents: read
+
+jobs:
+  test-python:
+    runs-on: ubuntu-latest
+    # Only run if the triggering workflow succeeded or if manually triggered
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull the Docker image
+        run: |
+          docker pull ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest
+
+      - name: Run Python xarray test notebook
+        run: |
+          docker run --rm \
+            -v "$PWD/tests:/tests" \
+            ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:latest \
+            bash -c "jupyter nbconvert --to notebook --execute /tests/test-python-xarray.ipynb --output /tests/test-python-xarray-output.ipynb"
+
+      - name: Display test results
+        if: always()
+        run: |
+          if [ -f tests/test-python-xarray-output.ipynb ]; then
+            echo "✓ Notebook executed successfully"
+            echo "Output saved to tests/test-python-xarray-output.ipynb"
+          else
+            echo "✗ Notebook execution failed"
+            exit 1
+          fi
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-results
+          path: tests/test-python-xarray-output.ipynb
+          if-no-files-found: warn
