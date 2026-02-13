@@ -19,14 +19,19 @@ COPY . /tmp/
 RUN chown -R ${NB_USER}:${NB_USER} /tmp/conda-env && chmod -R 755 /tmp/conda-env
 
 # Update conda env sequentially to prevent hairy solve
-RUN /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-core1.yml || (echo "install env-core1 failed" && exit 1)
-RUN /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-core2.yml || (echo "install env-core2 failed" && exit 1)
-RUN /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-geo.yml || (echo "install env-geo failed" && exit 1)
-RUN /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-viz.yml || (echo "install env-viz failed" && exit 1)
-RUN /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-qgis.yml || (echo "install env-qgis failed" && exit 1)
-RUN /pyrocket_scripts/install-apt-packages.sh /tmp/apt.txt || (echo "install-apt-packages.sh failed" && exit 1)
-RUN /pyrocket_scripts/install-desktop.sh /tmp/Desktop|| (echo "setup-desktop.sh failed" && exit 1)
+RUN set -eux; \
+    /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-core1.yml; \
+    /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-core2.yml; \
+    /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-geo.yml; \
+    /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-viz.yml; \
+    /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-qgis.yml
 
+RUN set -eux; \
+    /pyrocket_scripts/install-apt-packages.sh /tmp/apt.txt
+
+RUN set -eux; \
+    /pyrocket_scripts/install-desktop.sh /tmp/Desktop
+    
 USER root
 # install the geospatial libraries and R spatial; the rocker script is copied into py-rocket-base as part of that image build
 # need to ensure that it installs to the site-library (that user can control) and with a clean PATH
