@@ -1,11 +1,11 @@
 name: Test Python Notebooks
 
+# NOTE: This workflow is now integrated into build-and-push.yml
+# It remains available for manual testing of already-pushed images
+# For new builds, tests are automatically run before pushing the image
+
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Docker Image Build and Push"]
-    types:
-      - completed
 
 permissions:
   contents: read
@@ -13,8 +13,8 @@ permissions:
 jobs:
   test-python:
     runs-on: ubuntu-latest
-    # Only run if the triggering workflow succeeded or if manually triggered
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    # Only run if manually triggered
+    if: ${{ github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout repository

@@ -1,11 +1,11 @@
 name: Pin Package Versions
 
+# NOTE: This workflow is now integrated into build-and-push.yml
+# It remains available for manual package validation of already-pushed images
+# For new builds, package validation is automatically run before pushing the image
+
 on:
   workflow_dispatch:
-  workflow_run:
-    workflows: ["Docker Image Build and Push"]
-    types:
-      - completed
 
 permissions:
   contents: write
@@ -14,8 +14,8 @@ permissions:
 jobs:
   pin-packages:
     runs-on: ubuntu-latest
-    # Only run if the triggering workflow succeeded or if manually triggered
-    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
+    # Only run if manually triggered
+    if: ${{ github.event_name == 'workflow_dispatch' }}
 
     steps:
       - name: Checkout repository
