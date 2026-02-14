@@ -6,7 +6,7 @@
 
 ## What is py-rocket-geospatial-2?
 
-<img src="docs/py-rocket-geospatial-2.png" alt="py-rocket-geospatial-2 logo" width="150" align="right">
+<img src="docs/py-rocket-geospatial-2.png" alt="py-rocket-geospatial-2 logo" width="250" align="right">
 
 **py-rocket-geospatial-2** is a Python–R geospatial Docker image for large-scale earth-science data analysis in JupyterHub environments.
 
