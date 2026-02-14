@@ -83,6 +83,54 @@ Pinned versions are extracted directly from the built image and validated agains
 
 ---
 
+## CI/CD Workflow
+
+### Automated Build and Test Pipeline
+
+The repository uses a streamlined CI/CD workflow that ensures quality before publishing Docker images:
+
+**Workflow:** Build → Test → Push → Create Release PR (all in one job)
+
+The main `build-test-push` job executes:
+1. **Build** - Docker image is built and tagged (stays in runner's Docker cache)
+2. **Test Python** - Python notebook tests run against the built image
+3. **Test Packages** - Package validation ensures all specified packages are installed
+4. **Push** - Image is pushed to GHCR only if tests pass
+5. **Create Release PR** - A separate job creates a pull request with pinned package versions
+
+**Design**: The Docker image (~7GB compressed) stays in the build runner's local Docker cache, avoiding artifact transfer overhead. Only small artifacts (test results, validation reports) are uploaded with 7-day retention.
+
+### Manual Workflow Triggers
+
+You can manually trigger the workflow with options:
+
+- **Standard Build**: Go to Actions → "Docker Image Build and Push" → Run workflow
+  - Tests will run before pushing the image
+  
+- **Skip Tests (Debugging)**: Run workflow with `skip_tests: true`
+  - Use this option when debugging image build issues
+  - Image builds and pushes immediately without running tests
+  - ⚠️ **Use with caution** - only for debugging broken builds
+
+### Workflow Files
+
+- **`.github/workflows/build-and-push.yml`** - Main workflow (build, test, push, release)
+- **`.github/workflows/test-python.yml`** - Manual test trigger for existing images
+- **`.github/workflows/pin-packages.yml`** - Manual package validation for existing images
+
+### Automatic Triggers
+
+The workflow automatically runs when changes are pushed to `main` affecting:
+- `.github/actions/build-and-push/action.yml`
+- `.github/workflows/build-and-push.yml`
+- `Dockerfile`
+- `conda-env/env-*.yml`
+- `install.R`
+- `apt.txt`
+- `Desktop/**`
+
+---
+
 ## Customization and derivative images
 
 ### To customize py-rocket-geospatial-2
