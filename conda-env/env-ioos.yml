@@ -1,0 +1,39 @@
+name: py-rocket-geospatial
+channels:
+  - conda-forge
+  - nodefaults
+
+dependencies:
+  # IOOS Core packages
+  - compliance-checker # validates CF and ACDD compliance
+  - ioos-qc # IOOS Quality Control framework
+  - ioos-metrics # IOOS-specific metrics tools
+
+  # Ocean data access and APIs
+  - ckanapi # API client for CKAN data portals
+  - gliderpy>=0.3.1 # ocean glider data access
+  - owslib # OGC Web Services (WMS, WFS, etc.)
+  - pyobis # Ocean Biodiversity Information System API
+  - pyworms # World Register of Marine Species API
+
+  # Oceanographic data tools
+  - oceans # ocean data utilities
+  - pocean-core # physical oceanography core tools
+  - seawater # seawater properties library
+  - pysgrid # SGRID conventions for unstructured grids
+  - pyugrid # UGRID conventions for unstructured grids
+  - gridgeo # gridded geospatial tools
+  - odvc # Ocean Data View Compatible tools
+
+  # Utilities
+  - humanize # human-friendly value formatting
+  - palettable # color palettes
+  - retrying # retry decorator
+  - stamina # async retry library
+
+  # Additional packages that may not be in base
+  - cf-units # CF convention units
+  - cf-xarray # CF conventions for xarray
+  - folium # interactive maps
+  - geoplot # geospatial plotting
+  - netcdf4 # netCDF file format support
