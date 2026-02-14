@@ -1,28 +1,28 @@
-name: Create draft release
-description: Create a draft GitHub Release using VERSION from Dockerfile (YYYY.MM.DD). Fails if VERSION is missing or malformed.
+name: "Create draft release"
+description: "Create a draft GitHub Release using VERSION from Dockerfile (YYYY.MM.DD). Fails if VERSION is missing or malformed."
 
 inputs:
   tag_prefix:
-    description: Optional prefix for the tag (e.g. v). Default is empty.
+    description: "Optional prefix for the tag (e.g. v). Default is empty."
     required: false
     default: ""
   dockerfile_path:
-    description: Path to Dockerfile to parse version from
+    description: "Path to Dockerfile to parse version from"
     required: false
-    default: Dockerfile
+    default: "Dockerfile"
   target:
-    description: Git ref/sha to tag (default: current commit SHA)
+    description: "Git ref/sha to tag (default: current commit SHA)"
     required: false
     default: ""
   generate_notes:
-    description: Whether to auto-generate release notes (true/false)
+    description: "Whether to auto-generate release notes (true/false)"
     required: false
     default: "true"
 
 runs:
   using: composite
   steps:
-    - name: Extract and validate VERSION
+    - name: "Extract and validate VERSION"
       id: ver
       shell: bash
       run: |
@@ -50,16 +50,19 @@ runs:
 
         tag="${{ inputs.tag_prefix }}${version}"
         echo "Resolved tag: $tag"
-        echo "TAG=$tag" >> "$GITHUB_ENV"
 
-    - name: Create draft release (fails if tag already exists)
+        # Export for later steps
+        echo "TAG=$tag" >> "$GITHUB_ENV"
+        echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
+    - name: "Create draft release (fails if tag already exists)"
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
         set -euo pipefail
 
-        tag="${TAG}"
+        tag="${{ steps.ver.outputs.tag }}"
         title="Release ${tag}"
         target="${{ inputs.target }}"
 
