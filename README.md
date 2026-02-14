@@ -1,14 +1,12 @@
 # py-rocket-geospatial-2
 
-<p align="center">
-  <img src="docs/py-rocket-geospatial-2.png" alt="py-rocket-geospatial-2 logo" width="300">
-</p>
-
 [![Project Home](https://img.shields.io/badge/project-GitHub-blue?logo=github)](https://github.com/nmfs-opensci/py-rocket-geospatial-2) [![Report Issues](https://img.shields.io/badge/report%20issues-GitHub%20Issues-blue?logo=github)](https://github.com/nmfs-opensci/py-rocket-geospatial-2/issues) [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.18557656.svg)](https://doi.org/10.5281/zenodo.18557656) <br> [![stable release](https://img.shields.io/github/v/release/nmfs-opensci/py-rocket-geospatial-2?cacheSeconds=60)](https://github.com/nmfs-opensci/py-rocket-geospatial-2/releases) [![ghcr.io](https://img.shields.io/badge/ghcr.io-nmfs--opensci%2Fpy--rocket--geospatial--2-blue?logo=docker)](https://github.com/nmfs-opensci/py-rocket-geospatial-2/pkgs/container/py-rocket-geospatial-2) ![](https://ghcr-badge.egpl.dev/nmfs-opensci/py-rocket-geospatial-2/latest_tag?color=%2344cc11&amp;ignore=latest&amp;label=version&amp;trim=) ![](https://ghcr-badge.egpl.dev/nmfs-opensci/py-rocket-geospatial-2/size?color=%2344cc11&tag=latest&label=image+size&trim=)
 
 ---
 
 ## What is py-rocket-geospatial-2?
+
+<img src="docs/py-rocket-geospatial-2.png" alt="py-rocket-geospatial-2 logo" width="150" align="right">
 
 **py-rocket-geospatial-2** is a Python–R geospatial Docker image for large-scale earth-science data analysis in JupyterHub environments.
 
