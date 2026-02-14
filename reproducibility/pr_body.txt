@@ -1,5 +1,9 @@
 ## Package Validation: ✅ SUCCESS
 
+**Docker Image:** `ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:83cbab2`
+
+**Test Status:** ✅ All tests passed
+
 All Python packages from env-*.yml files and all R packages from install.R,
 install_geospatial.sh, and install_tidyverse.sh are present in the container image.
 
@@ -8,4 +12,4 @@ install_geospatial.sh, and install_tidyverse.sh are present in the container ima
 - **reproducibility/packages-r-pinned.R**: Updated with latest R package versions from site-library
 - **reproducibility/build.log**: Validation report for both Python and R packages
 
-Auto-generated from latest container image.
+Auto-generated from latest container image build.
