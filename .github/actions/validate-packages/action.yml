@@ -1,16 +1,16 @@
-name: Validate packages in container
-description: Extract pinned Python/R package lists from a Docker image and run repo validation scripts, producing reproducibility/build.log.
+name: "Validate packages in container"
+description: "Extract pinned Python/R package lists from a Docker image and run repo validation scripts, producing reproducibility/build.log."
 
 inputs:
   image:
-    description: Full image reference including tag (e.g. ghcr.io/org/repo/image:sha)
+    description: "Full image reference including tag (e.g. ghcr.io/org/repo/image:sha)"
     required: true
   repo_root_mount:
-    description: Host repo mount path inside container (default: /repo)
+    description: "Host repo mount path inside container (default: /repo)"
     required: false
-    default: /repo
+    default: "/repo"
   python_version:
-    description: Python version for running validation scripts on the runner
+    description: "Python version for running validation scripts on the runner"
     required: false
     default: "3.11"
 
@@ -96,3 +96,4 @@ runs:
         else
           echo "⚠️ validation_status=failed" | tee -a "$GITHUB_STEP_SUMMARY"
         fi
+
