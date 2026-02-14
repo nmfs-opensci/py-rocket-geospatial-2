@@ -185,6 +185,27 @@ jobs:
           echo "✓ Docker image pushed successfully"
 
       # ============================================================================
+      # ALSO PUSH IMAGE TO NEW LOCATION (backwards compatibility)
+      # ============================================================================
+      - name: Push new tags (back-compat location)
+        if: steps.push_image.outputs.pushed == 'true'
+        run: |
+          set -euo pipefail
+
+          SRC="ghcr.io/${{ github.repository_owner }}/${{ env.name }}"
+          DST="ghcr.io/${{ github.repository_owner }}/py-rocket-geospatial-2"
+
+          # Retag the already-built local image (no rebuild, no pull)
+          docker tag ${SRC}:${{ env.tag }}     ${DST}:${{ env.tag }}
+          docker tag ${SRC}:latest            ${DST}:latest
+          docker tag ${SRC}:${{ env.version }} ${DST}:${{ env.version }}
+
+          # Push all three tags to new location
+          docker push ${DST}:${{ env.tag }}
+          docker push ${DST}:latest
+          docker push ${DST}:${{ env.version }}
+
+      # ============================================================================
       # DRAFT RELEASE (composite action)
       # ============================================================================
       - name: Create draft release
