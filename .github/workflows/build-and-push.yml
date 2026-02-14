@@ -193,7 +193,7 @@ jobs:
           set -euo pipefail
 
           SRC="ghcr.io/${{ github.repository_owner }}/${{ env.name }}"
-          DST="ghcr.io/${{ github.repository_owner }}/py-rocket-geospatial-2"
+          DST="ghcr.io/${{ github.repository_owner }}/${{ github.event.repository.name }}"
 
           # Retag the already-built local image (no rebuild, no pull)
           docker tag ${SRC}:${{ env.tag }}     ${DST}:${{ env.tag }}
