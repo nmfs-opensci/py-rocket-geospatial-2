@@ -1,0 +1,141 @@
+name: Run notebook tests in container
+description: Execute one or more Jupyter notebooks via nbconvert inside a Docker image (as jovyan), using a glob pattern. Writes output notebooks next to inputs.
+
+inputs:
+  image:
+    description: Full image reference including tag (e.g. ghcr.io/org/repo/image:sha)
+    required: true
+  tests_dir:
+    description: Host directory containing tests (default: tests)
+    required: false
+    default: tests
+  pattern:
+    description: Glob pattern (relative to tests_dir) of notebooks to execute (e.g. test-*.ipynb)
+    required: false
+    default: "test-*.ipynb"
+  exclude_pattern:
+    description: Glob pattern (relative to tests_dir) to exclude (e.g. *-output.ipynb)
+    required: false
+    default: "*-output.ipynb"
+  output_suffix:
+    description: Suffix inserted before .ipynb for outputs (default: -output)
+    required: false
+    default: "-output"
+  fail_fast:
+    description: Stop on first failing notebook (true/false)
+    required: false
+    default: "true"
+  earthdata_user:
+    description: NASA Earthdata username (optional)
+    required: false
+    default: ""
+  earthdata_pass:
+    description: NASA Earthdata password (optional)
+    required: false
+    default: ""
+  netrc_machine:
+    description: Machine entry for .netrc (default: urs.earthdata.nasa.gov)
+    required: false
+    default: urs.earthdata.nasa.gov
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare .netrc and permissions for jovyan
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        TESTS_DIR="${{ inputs.tests_dir }}"
+        mkdir -p "${TESTS_DIR}"
+
+        if [ -n "${{ inputs.earthdata_user }}" ] && [ -n "${{ inputs.earthdata_pass }}" ]; then
+          echo "machine ${{ inputs.netrc_machine }} login ${{ inputs.earthdata_user }} password ${{ inputs.earthdata_pass }}" > "${TESTS_DIR}/.netrc"
+          chmod 0600 "${TESTS_DIR}/.netrc"
+        else
+          : > "${TESTS_DIR}/.netrc"
+          chmod 0600 "${TESTS_DIR}/.netrc"
+        fi
+
+        sudo chown -R 1000:1000 "${TESTS_DIR}"
+        sudo chmod -R u+rwX "${TESTS_DIR}"
+
+    - name: Execute notebooks with nbconvert (glob)
+      shell: bash
+      run: |
+        set -euo pipefail
+        shopt -s nullglob
+
+        TESTS_DIR="${{ inputs.tests_dir }}"
+        PATTERN="${{ inputs.pattern }}"
+        EXCLUDE="${{ inputs.exclude_pattern }}"
+        SUFFIX="${{ inputs.output_suffix }}"
+        FAIL_FAST="${{ inputs.fail_fast }}"
+        IMAGE="${{ inputs.image }}"
+
+        cd "${TESTS_DIR}"
+
+        # Build list based on pattern, excluding outputs (and any exclude pattern)
+        notebooks=( $PATTERN )
+        if [ ${#notebooks[@]} -eq 0 ]; then
+          echo "::error::No notebooks matched ${TESTS_DIR}/${PATTERN}"
+          exit 1
+        fi
+
+        # Apply exclusion
+        filtered=()
+        for nb in "${notebooks[@]}"; do
+          # Exclude by glob
+          if [[ "$nb" == $EXCLUDE ]]; then
+            continue
+          fi
+          filtered+=("$nb")
+        done
+
+        if [ ${#filtered[@]} -eq 0 ]; then
+          echo "::error::After exclusions, no notebooks remain to run."
+          exit 1
+        fi
+
+        echo "Notebooks to execute:"
+        printf ' - %s\n' "${filtered[@]}"
+
+        failures=0
+
+        for nb in "${filtered[@]}"; do
+          base="${nb%.ipynb}"
+          out="${base}${SUFFIX}.ipynb"
+          echo "------------------------------------------------------------"
+          echo "Running: ${TESTS_DIR}/${nb}"
+          echo "Output:  ${TESTS_DIR}/${out}"
+
+          # Run inside container; mount tests dir at /tests
+          if ! docker run --rm \
+            -v "$PWD/.. /__dummy__" >/dev/null 2>&1; then
+            : # no-op; just to keep shellcheck calm (we don't use shellcheck here)
+          fi
+
+          if ! docker run --rm \
+            -v "$(pwd -P):/tests" \
+            "${IMAGE}" \
+            bash -lc "set -e
+              cp /tests/.netrc ~/.netrc
+              chmod 0600 ~/.netrc
+              jupyter nbconvert --to notebook --execute \"/tests/${nb}\" --output \"/tests/${out}\""
+          then
+            echo "::error::Notebook failed: ${TESTS_DIR}/${nb}"
+            failures=$((failures+1))
+            if [ "${FAIL_FAST}" = "true" ]; then
+              exit 1
+            fi
+          else
+            echo "✓ Passed: ${TESTS_DIR}/${nb}"
+          fi
+        done
+
+        if [ "$failures" -gt 0 ]; then
+          echo "::error::${failures} notebook(s) failed."
+          exit 1
+        fi
+
+        echo "✓ All notebook tests passed."
