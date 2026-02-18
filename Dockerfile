@@ -5,7 +5,7 @@ LABEL org.opencontainers.image.author="eli.holmes@noaa.gov"
 LABEL org.opencontainers.image.source=https://github.com/nmfs-opensci/py-rocket-geospatial-2
 LABEL org.opencontainers.image.description="Geospatial Python (3.11) and R (4.5.1) image with Desktop (QGIS, Panoply, CWUtils)"
 LABEL org.opencontainers.image.licenses=Apache2.0
-LABEL org.opencontainers.image.version=2026.02.13
+LABEL org.opencontainers.image.version=2026.02.18
 
 ENV PROJ_LIB=/srv/conda/envs/notebook/share/proj
 
@@ -64,6 +64,9 @@ ENV PATH=${PATH}:/tmp/PanoplyJ
 
 # Install tools for working with Google Cloud Buckets
 RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && apt-get update -y && apt-get install google-cloud-cli -y
+
+# Install AWS tools
+RUN awsv2 --install
 
 # Clear out files put in /tmp
 RUN rm -rf /tmp/*
