@@ -6,23 +6,65 @@ Packages from pangeo-notebook feedstock: 7
 Packages from pangeo-dask feedstock: 3
 Other packages from py-rocket-base: 28
 Total packages from py-rocket-base: 38
-Total unique packages in env-*.yml files: 93
-Total packages in filtered packages-python-pinned.yaml: 131
+Total unique packages in env-*.yml files: 117
+Total packages in filtered packages-python-pinned.yaml: 134
 
-STATUS: SUCCESS
+STATUS: FAILED
 ======================================================================
 
-All Python packages from py-rocket-base environment.yaml and
-env-*.yml files are present in the container image and have been
-pinned in packages-python-pinned.yaml.
+The following packages are in env-*.yml or py-rocket-base files
+but were NOT found in the container image:
 
-The pinned file includes:
-  - Packages from pangeo-notebook feedstock
-  - Packages from pangeo-dask feedstock
-  - Other packages from py-rocket-base
-  - Packages from conda-env/env-*.yml files
+  - cf-units
+    Found in: env-ioos.yml
+  - cf-xarray
+    Found in: env-ioos.yml
+  - ckanapi
+    Found in: env-ioos.yml
+  - compliance-checker
+    Found in: env-ioos.yml
+  - geoplot
+    Found in: env-ioos.yml
+  - gliderpy
+    Found in: env-ioos.yml
+  - gridgeo
+    Found in: env-ioos.yml
+  - humanize
+    Found in: env-ioos.yml
+  - ioos-metrics
+    Found in: env-ioos.yml
+  - ioos-qc
+    Found in: env-ioos.yml
+  - oceans
+    Found in: env-ioos.yml
+  - odvc
+    Found in: env-ioos.yml
+  - palettable
+    Found in: env-ioos.yml
+  - pocean-core
+    Found in: env-ioos.yml
+  - pyobis
+    Found in: env-ioos.yml
+  - pysgrid
+    Found in: env-ioos.yml
+  - pyugrid
+    Found in: env-ioos.yml
+  - pyworms
+    Found in: env-ioos.yml
+  - retrying
+    Found in: env-ioos.yml
+  - seawater
+    Found in: env-ioos.yml
+  - stamina
+    Found in: env-ioos.yml
 
-Not all 900+ packages from the conda environment are included.
+Total missing packages: 21
+
+To resolve this issue:
+  1. Check if these packages failed to install in the container
+  2. Review the container build logs for errors
+  3. Fix any installation issues and rebuild the container
+  4. If packages are not needed, remove them from the respective files
 
 ======================================================================
 

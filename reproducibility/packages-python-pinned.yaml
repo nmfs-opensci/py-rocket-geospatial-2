@@ -51,13 +51,13 @@ adlfs=2026.2.0=pyhd8ed1ab_0
 apng=0.3.4=pyhd8ed1ab_0
 awscliv2=2.3.1=pyhd8ed1ab_1
 bokeh=3.8.2=pyhd8ed1ab_0
-boto3=1.42.42=pyhd8ed1ab_0
+boto3=1.42.49=pyhd8ed1ab_0
 bqplot=0.12.45=pyhe01879c_0
 cartopy=0.25.0=py311hed34c8f_1
 certifi=2026.1.4=pyhd8ed1ab_0
 cftime=1.6.5=py311h0372a8f_1
 cmocean=4.0.3=pyhd8ed1ab_1
-coiled=1.130.4=pyhd8ed1ab_0
+coiled=1.131.0=pyhd8ed1ab_0
 contextily=1.7.0=pyhd8ed1ab_0
 copernicusmarine=2.3.0=pyhd8ed1ab_0
 cython=3.2.4=py311h0daaf2c_0
@@ -69,6 +69,7 @@ erddapy=3.1.0=pyhd8ed1ab_0
 esmpy=8.8.1=pyhecae5ae_0
 fastparquet=2025.12.0=py311h0372a8f_0
 flox=0.11.1=pyhd8ed1ab_0
+folium=0.20.0=pyhd8ed1ab_0
 fsspec=2026.2.0=pyhd8ed1ab_0
 gcsfs=2026.2.0=pyhd8ed1ab_0
 geemap=0.37.1=pyhd8ed1ab_0
@@ -83,7 +84,7 @@ harmony-py=0.4.14=pyhd8ed1ab_0
 hdf5plugin=5.1.0=py311hf26c3c1_0
 holoviews=1.22.1=pyhd8ed1ab_0
 hvplot=0.12.2=pyhd8ed1ab_0
-hypothesis=6.151.6=pyha770c72_0
+hypothesis=6.151.9=pyha770c72_0
 imageio=2.37.0=pyhfb79c49_0
 intake=2.0.8=pyhd8ed1ab_0
 intake-erddap=0.5.2=pyhd8ed1ab_1
@@ -99,9 +100,11 @@ lonboard=0.14.0=pyhbbac1ac_0
 lxml=6.0.2=py311hc53b721_0
 matplotlib=3.10.8=py311h38be061_0
 nco=5.3.3=h657489c_0
+netcdf4=1.7.2=nompi_py311hae66bec_101
 networkx=3.6.1=pyhcf101f3_0
 numba=0.63.1=py311h3c884d5_0
 numpy=2.3.5=py311h2e04523_1
+owslib=0.35.0=pyhd8ed1ab_0
 pandas=2.3.3=py311hed34c8f_2
 plotly=6.5.2=pyhd8ed1ab_0
 polars=1.32.3=default_h3512890_0
@@ -136,7 +139,7 @@ statsmodels=0.14.6=py311h0372a8f_0
 sympy=1.14.0=pyh2585a3b_105
 tqdm=4.67.3=pyh8f84b5b_0
 virtualizarr=2.4.0=pyhd8ed1ab_0
-xarray=2026.1.0=pyhcf101f3_0
+xarray=2026.2.0=pyhcf101f3_0
 xarray-datatree=0.0.14=pyhd8ed1ab_0
 xq=0.0.4=pypi_0
 zarr=3.1.5=pyhcf101f3_0
