@@ -1,6 +1,6 @@
 ## Package Validation: ✅ SUCCESS
 
-**Docker Image:** `ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:af604e9`
+**Docker Image:** `ghcr.io/nmfs-opensci/container-images/py-rocket-geospatial-2:e27d843`
 
 **Test Status:** ✅ All tests passed
 
