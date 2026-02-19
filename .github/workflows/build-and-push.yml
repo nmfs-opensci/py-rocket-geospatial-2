@@ -15,7 +15,6 @@ on:
       - ".github/actions/build-and-push/action.yml"
       - ".github/actions/run-notebook-test/action.yml"
       - ".github/actions/validate-packages/action.yml"
-      - ".github/actions/create-draft-release/action.yml"
       - ".github/workflows/build-and-push.yml"
       - "Dockerfile"
       - "conda-env/env-*.yml"
