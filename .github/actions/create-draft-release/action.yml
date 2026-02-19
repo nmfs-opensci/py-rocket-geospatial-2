@@ -104,6 +104,22 @@ runs:
           echo ""
         } >> "$body_file"
 
+        # Append auto-generated release notes via API (avoids --generate-notes flag compatibility issues)
+        if [ "${{ inputs.generate_notes }}" = "true" ]; then
+          generated=$(gh api "repos/$GITHUB_REPOSITORY/releases/generate-notes" \
+            --method POST \
+            --field tag_name="$tag" \
+            --field target_commitish="$target" \
+            --jq '.body' 2>&1) && api_ok=true || api_ok=false
+          if [ "$api_ok" = "true" ] && [ -n "$generated" ]; then
+            echo "$generated" >> "$body_file"
+          elif [ "$api_ok" = "false" ]; then
+            echo "::warning::Failed to generate release notes via API: $generated"
+          else
+            echo "::notice::Auto-generated release notes were empty; body will contain only the standard description."
+          fi
+        fi
+
         # Check if a release with this tag already exists
         release_info=$(gh release view "$tag" --json isDraft 2>/dev/null || echo "")
 
@@ -111,11 +127,7 @@ runs:
           is_draft=$(echo "$release_info" | jq -r '.isDraft')
           if [ "$is_draft" = "true" ] && [ "${{ inputs.force_update }}" = "true" ]; then
             # Update existing draft release
-            edit_args=(release edit "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file")
-            if [ "${{ inputs.generate_notes }}" = "true" ]; then
-              edit_args+=(--generate-notes)
-            fi
-            gh "${edit_args[@]}"
+            gh release edit "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file"
             echo "✓ Updated existing draft release for tag $tag"
           elif [ "$is_draft" != "true" ]; then
             echo "::error::Release for tag '$tag' already exists and is not a draft. Cannot update a published release."
@@ -125,12 +137,8 @@ runs:
             exit 1
           fi
         else
-          # Create new draft release; GitHub-generated notes will append after notes-file.
-          args=(release create "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file")
-          if [ "${{ inputs.generate_notes }}" = "true" ]; then
-            args+=(--generate-notes)
-          fi
-          gh "${args[@]}"
+          # Create new draft release
+          gh release create "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file"
           echo "✓ Draft release created for tag $tag"
         fi
 
