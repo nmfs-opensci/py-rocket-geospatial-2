@@ -206,16 +206,29 @@ jobs:
           docker push ${DST}:${{ env.version }}
 
       # ============================================================================
-      # DRAFT RELEASE (composite action)
+      # UPLOAD RELEASE METADATA (consumed by draft-release workflow)
       # ============================================================================
-      - name: Create draft release
-        if: env.SKIP_TESTS == 'false' && success()
-        uses: ./.github/actions/create-draft-release
+      - name: Write release metadata
+        if: steps.push_image.outputs.pushed == 'true'
+        run: |
+          set -euo pipefail
+          dockerfile_sha256=$(sha256sum Dockerfile | awk '{print $1}')
+          jq -n \
+            --arg sha "${{ github.sha }}" \
+            --arg tests_skipped "${{ steps.check_skip.outputs.skip_tests }}" \
+            --arg tag "${{ env.tag }}" \
+            --arg version "${{ env.version }}" \
+            --arg dockerfile_sha256 "$dockerfile_sha256" \
+            '{sha: $sha, tests_skipped: $tests_skipped, tag: $tag, version: $version, dockerfile_sha256: $dockerfile_sha256}' \
+            > release-metadata.json
+
+      - name: Upload release metadata artifact
+        if: steps.push_image.outputs.pushed == 'true'
+        uses: actions/upload-artifact@v4
         with:
-          tag_prefix: ""
-          dockerfile_path: Dockerfile
-          target: ${{ github.sha }}
-          generate_notes: "true"
+          name: release-metadata
+          path: release-metadata.json
+          retention-days: 7
 
   create-release-pr:
     runs-on: ubuntu-latest
