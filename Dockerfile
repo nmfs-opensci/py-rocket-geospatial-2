@@ -23,6 +23,7 @@ RUN set -eux; \
     /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-core1.yml; \
     /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-core2.yml; \
     /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-geo.yml; \
+    /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-ioos.yml; \
     /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-viz.yml; \
     /pyrocket_scripts/install-conda-packages.sh /tmp/conda-env/env-qgis.yml
 
