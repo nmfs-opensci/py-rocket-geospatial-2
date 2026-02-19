@@ -100,4 +100,4 @@ jobs:
           target: ${{ steps.target.outputs.sha }}
           generate_notes: "true"
           release_tag: ${{ inputs.release_tag }}
-          force_update: ${{ inputs.force_update }}
+          force_update: ${{ inputs.force_update == true && 'true' || 'false' }}
