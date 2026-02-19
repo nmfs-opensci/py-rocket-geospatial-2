@@ -1,0 +1,103 @@
+name: Create Draft Release
+
+on:
+  workflow_run:
+    workflows: ["Docker Image Build and Push"]
+    types: [completed]
+  workflow_dispatch:
+    inputs:
+      target_sha:
+        description: "Commit SHA to create release for (default: current HEAD)"
+        required: false
+        default: ""
+      release_tag:
+        description: "Release tag override (optional: if blank, uses version from Dockerfile)"
+        required: false
+        default: ""
+      force_update:
+        description: "If true, update an existing draft release instead of failing"
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+jobs:
+  draft-release:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      github.event.workflow_run.conclusion == 'success'
+
+    steps:
+      - name: Determine target SHA
+        id: target
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            sha="${{ inputs.target_sha }}"
+            if [ -z "$sha" ]; then
+              sha="${{ github.sha }}"
+            fi
+          else
+            sha="${{ github.event.workflow_run.head_sha }}"
+          fi
+          echo "sha=$sha" >> $GITHUB_OUTPUT
+
+      - name: Download release metadata artifact
+        if: github.event_name == 'workflow_run'
+        uses: actions/download-artifact@v4
+        with:
+          name: release-metadata
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ github.event.workflow_run.id }}
+
+      - name: Parse release metadata
+        if: github.event_name == 'workflow_run'
+        id: metadata
+        run: |
+          set -euo pipefail
+          tests_skipped=$(jq -r '.tests_skipped' release-metadata.json)
+          dockerfile_sha256=$(jq -r '.dockerfile_sha256' release-metadata.json)
+          echo "tests_skipped=$tests_skipped" >> $GITHUB_OUTPUT
+          echo "dockerfile_sha256=$dockerfile_sha256" >> $GITHUB_OUTPUT
+          if [ "$tests_skipped" = "true" ]; then
+            echo "::notice::Tests were skipped in the triggering workflow run. Draft release will be skipped."
+          fi
+
+      - name: Checkout repository (action code from current HEAD)
+        if: steps.metadata.outputs.tests_skipped != 'true'
+        uses: actions/checkout@v4
+
+      - name: Fetch Dockerfile from target SHA
+        if: steps.metadata.outputs.tests_skipped != 'true'
+        run: |
+          set -euo pipefail
+          git fetch --depth=1 origin "${{ steps.target.outputs.sha }}"
+          git checkout "${{ steps.target.outputs.sha }}" -- Dockerfile
+
+      - name: Verify Dockerfile integrity
+        if: >-
+          steps.metadata.outputs.tests_skipped != 'true' &&
+          github.event_name == 'workflow_run' &&
+          steps.metadata.outputs.dockerfile_sha256 != ''
+        run: |
+          set -euo pipefail
+          actual_sha256=$(sha256sum Dockerfile | awk '{print $1}')
+          expected_sha256="${{ steps.metadata.outputs.dockerfile_sha256 }}"
+          if [ "$actual_sha256" != "$expected_sha256" ]; then
+            echo "::error::Dockerfile SHA256 mismatch! Expected: $expected_sha256, Got: $actual_sha256"
+            exit 1
+          fi
+          echo "✓ Dockerfile integrity verified (SHA256: $actual_sha256)"
+
+      - name: Create draft release
+        if: steps.metadata.outputs.tests_skipped != 'true'
+        uses: ./.github/actions/create-draft-release
+        with:
+          tag_prefix: ""
+          dockerfile_path: Dockerfile
+          target: ${{ steps.target.outputs.sha }}
+          generate_notes: "true"
+          release_tag: ${{ inputs.release_tag }}
+          force_update: ${{ inputs.force_update }}

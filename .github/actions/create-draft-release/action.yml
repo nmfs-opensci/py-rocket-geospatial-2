@@ -22,6 +22,14 @@ inputs:
     description: "Path to a markdown file containing the standard release description to prepend"
     required: false
     default: ".github/release/description.md"
+  release_tag:
+    description: "Override the release tag. If blank, the tag is derived from the Dockerfile VERSION and tag_prefix."
+    required: false
+    default: ""
+  force_update:
+    description: "If 'true' and a draft release with this tag already exists, update it instead of failing."
+    required: false
+    default: "false"
 
 runs:
   using: composite
@@ -52,12 +60,17 @@ runs:
           exit 1
         fi
 
-        tag="${{ inputs.tag_prefix }}${version}"
+        # Use release_tag override if provided, otherwise derive from tag_prefix + version
+        if [ -n "${{ inputs.release_tag }}" ]; then
+          tag="${{ inputs.release_tag }}"
+        else
+          tag="${{ inputs.tag_prefix }}${version}"
+        fi
         echo "Resolved tag: $tag"
 
         echo "tag=$tag" >> "$GITHUB_OUTPUT"
 
-    - name: "Create draft release (prepends standard description + What changed)"
+    - name: "Create or update draft release (prepends standard description + What changed)"
       shell: bash
       env:
         GH_TOKEN: ${{ github.token }}
@@ -71,11 +84,6 @@ runs:
 
         if [ -z "$target" ]; then
           target="${GITHUB_SHA}"
-        fi
-
-        if gh release view "$tag" >/dev/null 2>&1; then
-          echo "::error::Release for tag '$tag' already exists."
-          exit 1
         fi
 
         body_file="$(mktemp)"
@@ -96,13 +104,33 @@ runs:
           echo ""
         } >> "$body_file"
 
-        # Create draft release; GitHub-generated notes will append after notes-file.
-        args=(release create "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file")
+        # Check if a release with this tag already exists
+        release_info=$(gh release view "$tag" --json isDraft 2>/dev/null || echo "")
 
-        if [ "${{ inputs.generate_notes }}" = "true" ]; then
-          args+=(--generate-notes)
+        if [ -n "$release_info" ]; then
+          is_draft=$(echo "$release_info" | jq -r '.isDraft')
+          if [ "$is_draft" = "true" ] && [ "${{ inputs.force_update }}" = "true" ]; then
+            # Update existing draft release
+            edit_args=(release edit "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file")
+            if [ "${{ inputs.generate_notes }}" = "true" ]; then
+              edit_args+=(--generate-notes)
+            fi
+            gh "${edit_args[@]}"
+            echo "✓ Updated existing draft release for tag $tag"
+          elif [ "$is_draft" != "true" ]; then
+            echo "::error::Release for tag '$tag' already exists and is not a draft. Cannot update a published release."
+            exit 1
+          else
+            echo "::error::Draft release for tag '$tag' already exists. Rerun with force_update=true to update it, or choose a different tag."
+            exit 1
+          fi
+        else
+          # Create new draft release; GitHub-generated notes will append after notes-file.
+          args=(release create "$tag" --draft --title "$title" --target "$target" --notes-file "$body_file")
+          if [ "${{ inputs.generate_notes }}" = "true" ]; then
+            args+=(--generate-notes)
+          fi
+          gh "${args[@]}"
+          echo "✓ Draft release created for tag $tag"
         fi
-
-        gh "${args[@]}"
-        echo "✓ Draft release created for tag $tag"
 
