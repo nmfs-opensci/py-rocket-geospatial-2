@@ -6,8 +6,8 @@ Packages from pangeo-notebook feedstock: 7
 Packages from pangeo-dask feedstock: 3
 Other packages from py-rocket-base: 28
 Total packages from py-rocket-base: 38
-Total unique packages in env-*.yml files: 93
-Total packages in filtered packages-python-pinned.yaml: 131
+Total unique packages in env-*.yml files: 115
+Total packages in filtered packages-python-pinned.yaml: 153
 
 STATUS: SUCCESS
 ======================================================================
