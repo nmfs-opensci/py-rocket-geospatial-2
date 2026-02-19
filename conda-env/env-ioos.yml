@@ -31,9 +31,8 @@ dependencies:
   - retrying # retry decorator
   - stamina # async retry library
 
-  # Additional packages that may not be in base
+  # Additional packages not in base
   - cf-units # CF convention units
   - cf-xarray # CF conventions for xarray
-  - folium # interactive maps
   - geoplot # geospatial plotting
-  - netcdf4 # netCDF file format support
+
