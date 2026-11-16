@@ -2,7 +2,7 @@
 # install R dependencies
 
 # CRAN binaries repo (from image build)
-repo <- "https://p3m.dev/cran/__linux__/noble/2025-10-30"
+repo <- "https://p3m.dev/cran/__linux__/noble/2026-10-28"
 
 # Guardrail: don’t install into /home in the Docker build context
 install_lib <- .libPaths()[1]
@@ -33,10 +33,10 @@ list.of.packages <- c(
   "readHAC",
   "parsedate",
   "tigris",
-  "mirai"
+  "mirai",
+  "zarr"
 )
 install.packages(list.of.packages, repos = repo)
-# "zarr"  add when upgrade to R. Came out in Feb 2026
 
 # ------------------------------------------------------------
 # 2) Geospatial + mapping + earth/ocean data utilities
@@ -54,6 +54,7 @@ list.of.packages <- c(
   "oce",
   "ocedata",
   "plotdap",
+  "rerddap",
   "rerddapXtracto",
   "openair",
   "cmocean"

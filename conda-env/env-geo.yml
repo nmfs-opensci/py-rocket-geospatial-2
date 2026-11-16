@@ -22,3 +22,4 @@ dependencies:
 
   # utils
   - esmpy # regridding utility
+  - xoak # point selection on irregular grids (#68)

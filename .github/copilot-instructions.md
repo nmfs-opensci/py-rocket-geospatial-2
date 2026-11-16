@@ -4,9 +4,9 @@
 
 This repository builds a Docker image (`py-rocket-geospatial-2`) that provides a comprehensive Python and R geospatial computing environment. The image includes:
 
-- **Python 3.11** with geospatial packages (Pangeo notebook environment + CryoCloud-like extensions)
+- **Python 3.13** with geospatial packages (Pangeo notebook environment + CryoCloud-like extensions)
 - **R 4.5.X** with Rocker geospatial packages
-- **Desktop environment** with QGIS, CoastWatch Utilities, and Panoply
+- **Desktop environment** with QGIS (Panoply and CoastWatch Utilities moved to a derivative image)
 - **Documentation tools**: TeXLive, Quarto, MyST, JupyterBook
 - **Base infrastructure**: Jupyter, Dask, RStudio from [py-rocket-base](https://github.com/nmfs-opensci/py-rocket-base/)
 
@@ -127,7 +127,7 @@ Users can create derivative images using this as a base. When helping with deriv
 - Manual testing involves pulling and running the Docker image locally
 - Check that the conda notebook environment activates correctly
 - Verify R can be used from both RStudio and JupyterLab
-- Ensure Desktop applications (QGIS, Panoply, CoastWatch Utilities) launch properly
+- Ensure Desktop applications (QGIS) launch properly
 
 ## Common Issues
 

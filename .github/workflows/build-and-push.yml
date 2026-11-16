@@ -23,6 +23,7 @@ on:
       - "Desktop/**"
       - "tests/**"
       - ".github/scripts/**"
+      - "scripts/**"
 
 permissions:
   contents: write
@@ -141,7 +142,7 @@ jobs:
         uses: ./.github/actions/validate-packages
         with:
           image: ${{ env.IMAGE_NAME }}
-          python_version: "3.11"
+          python_version: "3.13"
 
       - name: Set validation status
         if: env.SKIP_TESTS == 'false'

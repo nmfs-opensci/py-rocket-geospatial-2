@@ -32,7 +32,8 @@ It is designed for users working with large earth-observation datasets, especial
 
 ### Desktop tools for earth science
 - Linux desktop via VNC  
-- Pre-installed applications commonly used in earth-science workflows: QGIS, Panoply, CoastWatch Utilities  
+- Pre-installed desktop applications: QGIS, Zotero  
+- Panoply and CoastWatch Utilities moved out of this image (2026-11) to their own derivative image  
 
 The image also includes Quarto, TeX Live, MyST, and JupyterBook for scientific publishing.
 
@@ -40,10 +41,48 @@ The image also includes Quarto, TeX Live, MyST, and JupyterBook for scientific p
 
 ## Runtime overview
 
-- **Python:** 3.11  
+- **Python:** 3.13  
   - Conda environment `notebook`, activated on startup  
-- **R:** 4.5.x  
+- **R:** 4.6.x  
   - Shared across RStudio and JupyterLab  
+
+---
+
+## Cloud and virtual-data tools
+
+The image is set up for cloud-optimized and virtual data work (Icechunk, Source
+Cooperative, AWS, Google Cloud Storage).
+
+- **Python:** `icechunk`, `virtualizarr`, `zarr` 3, `obstore`, `obspec-utils`, `kerchunk`,
+  `fsspec`/`s3fs`/`gcsfs`, `earthaccess` (see `conda-env/env-core2.yml`).
+- **Command-line tools in the image:**
+
+  | Tool | Command | Sign in |
+  |---|---|---|
+  | AWS CLI (conda-forge `awscli`) | `aws` | `aws configure` or `aws sso login`; credentials in `~/.aws` |
+  | Google Cloud CLI | `gcloud`, `gsutil`, `bq` | `gcloud auth login` and `gcloud auth application-default login` (the second gives `gcsfs` and `rclone` credentials) |
+  | Source Cooperative CLI (v0.3.0) | `source-coop` | `source-coop login --duration 1d --port 8400`, then open `/user/<name>/proxy/8400/` on the hub |
+  | rclone, s5cmd | `rclone`, `s5cmd` | bulk copies to S3, GCS and Source Cooperative |
+  | GitHub CLI (from py-rocket-base) | `gh` | `gh auth login` |
+
+  A newer `source-coop` (or any other tool) put in `~/.local/bin` takes precedence over the image copy.
+
+### Coding agents: install them yourself
+
+Claude Code and Antigravity are **not** in the image: they update themselves about
+weekly, so a copy in the image would go stale and your own install would shadow it
+anyway. The image ships a helper that runs each tool's official installer into your home:
+
+```bash
+install-user-tools --list
+install-user-tools claude        # Claude Code  -> ~/.local/bin/claude
+install-user-tools agy           # Antigravity  -> ~/.local/bin/agy
+```
+
+Homes persist on the hubs, so one install lasts across image updates. Sign in with
+your own account or key; the image ships no credentials. Your home has a **20 GiB
+quota**: Claude Code keeps several versions (about 230 MB in `~/.local/share/claude`)
+and Antigravity is a ~280 MB binary.
 
 ---
 
@@ -66,7 +105,8 @@ docker run -it --rm -p 8888:8888 ghcr.io/nmfs-opensci/container-images/py-rocket
 
 - **py-rocket-geospatial-2** adds:
   - Python and R geospatial packages  
-  - Desktop applications (QGIS, CoastWatch Utilities, Panoply)  
+  - Desktop applications (QGIS)  
+  - Cloud CLIs (gcloud, aws, source-coop, rclone, s5cmd)  
 
 See the [py-rocket-base documentation](https://nmfs-opensci.github.io/py-rocket-base/) for base image design details.
 
@@ -113,9 +153,17 @@ You can manually trigger the workflow with options:
   - Image builds and pushes immediately without running tests
   - ⚠️ **Use with caution** - only for debugging broken builds
 
+### Trying a change before it reaches main
+
+**Actions → "Test build (branch -> test image)" → Run workflow**, choosing your branch.
+It builds the image, runs the notebook tests and package validation, and pushes only to
+`ghcr.io/nmfs-opensci/py-rocket-geospatial-2/test:latest` (and `:<short sha>`). It never
+pushes the real `:latest`, never opens a pins PR and never makes a release.
+
 ### Workflow Files
 
 - **`.github/workflows/build-and-push.yml`** - Main workflow (build, test, push, release)
+- **`.github/workflows/test-build.yml`** - Manual build of any branch, pushed to the `test` image only
 - **`.github/workflows/test-python.yml`** - Manual test trigger for existing images
 - **`.github/workflows/pin-packages.yml`** - Manual package validation for existing images
 
@@ -138,8 +186,8 @@ The workflow automatically runs when changes are pushed to `main` affecting:
 
 * edit the Python packages in `conda-env/env-*.yml`
 * edit the R packages in `install.R`
-* update the QGIS, CoastWatch Utilities, and Panoply installs in `Dockerfile`
-* update the systems installs in `apt.txt
+* update the gcloud and source-coop installs in `Dockerfile`
+* update the systems installs in `apt.txt`
 
 If changes affect core platform behavior, please open an issue in  [py-rocket-base](https://github.com/nmfs-opensci/py-rocket-base/issues)
 

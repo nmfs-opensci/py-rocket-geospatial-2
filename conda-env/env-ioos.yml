@@ -15,6 +15,7 @@ dependencies:
   - owslib # OGC Web Services (WMS, WFS, etc.)
   - pyobis # Ocean Biodiversity Information System API
   - pyworms # World Register of Marine Species API
+  - argopy # Argo float data access (#68)
 
   # Oceanographic data tools
   - oceans # ocean data utilities
@@ -36,3 +37,6 @@ dependencies:
   - cf-xarray # CF conventions for xarray
   - geoplot # geospatial plotting
 
+  # pip-only. Here, not in core2, because it needs cf-xarray (installed above).
+  - pip:
+    - point-collocation # fish-pace point matchups against cloud granules; not on conda-forge (#68)

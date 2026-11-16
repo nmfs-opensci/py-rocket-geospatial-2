@@ -1,11 +1,11 @@
-FROM ghcr.io/nmfs-opensci/py-rocket-base:2026.02.12
+FROM ghcr.io/nmfs-opensci/py-rocket-base:2026.11.16
 
 LABEL org.opencontainers.image.maintainers="eli.holmes@noaa.gov"
 LABEL org.opencontainers.image.author="eli.holmes@noaa.gov"
 LABEL org.opencontainers.image.source=https://github.com/nmfs-opensci/py-rocket-geospatial-2
-LABEL org.opencontainers.image.description="Geospatial Python (3.11) and R (4.5.1) image with Desktop (QGIS, Panoply, CWUtils)"
+LABEL org.opencontainers.image.description="Geospatial Python (3.13) and R (4.6.1) image with Desktop (QGIS) and cloud CLIs (gcloud, aws, source-coop, rclone, s5cmd)"
 LABEL org.opencontainers.image.licenses=Apache2.0
-LABEL org.opencontainers.image.version=2026.02.18
+LABEL org.opencontainers.image.version=2026.11.16
 
 ENV PROJ_LIB=/srv/conda/envs/notebook/share/proj
 
@@ -47,27 +47,30 @@ RUN echo '.libPaths("/usr/local/lib/R/site-library")' > /etc/littler.r && \
 # Any packages that have gdal dependency should be installed after install_geospatial.sh is run
 RUN /pyrocket_scripts/install-r-packages.sh /tmp/install.R || (echo "install-r-package.sh failed" && exit 1)
 
-# Install cwutils
-RUN cd /tmp && \
-    wget https://www.star.nesdis.noaa.gov/socd/coastwatch/cwf/cwutils-4_0_0_198-linux-x86_64.tar.gz && \
-    tar -zxf cwutils-4_0_0_198-linux-x86_64.tar.gz && \
-    rm -rf cwutils-4_0_0_198-linux-x86_64.tar.gz
-ENV PATH=${PATH}:/tmp/cwutils_4.0.0.198/bin
-ENV MANPATH=${MANPATH}:/tmp/cwutils_4.0.0.198/doc/man
-ENV INSTALL4J ADD VM PARAMS=-Dsun.java2d.uiScale=2.0
+# Google Cloud CLI (gcloud, gsutil, bq) from Google's apt repo.
+# --no-install-recommends drops google-cloud-cli-anthoscli (~120 MB) that apt would otherwise pull in.
+RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" > /etc/apt/sources.list.d/google-cloud-sdk.list && \
+    curl -fsSL https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && \
+    apt-get update -y && \
+    apt-get install -y --no-install-recommends google-cloud-cli && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install panoply
-RUN cd /tmp && \
-  wget --user-agent="Mozilla/5.0" https://www.giss.nasa.gov/tools/panoply/download/PanoplyJ-5.9.0.tgz && \
-  tar -zxf PanoplyJ-5.9.0.tgz && \
-  rm -rf PanoplyJ-5.9.0.tgz
-ENV PATH=${PATH}:/tmp/PanoplyJ
+# Source Cooperative CLI, pinned release, checksum verified.
+# A user who needs a newer version can put one in ~/.local/bin, which comes first on PATH.
+ARG SOURCE_COOP_VERSION=0.3.0
+ARG SOURCE_COOP_SHA256=213f8d0d2525d66fa8b8a022ecea397847b15c3d42c8bd87470f370b9b3236c0
+RUN set -eux; \
+    cd /tmp; \
+    f=source-coop-cli-x86_64-unknown-linux-gnu.tar.xz; \
+    curl -fsSLO "https://github.com/source-cooperative/source-coop-cli/releases/download/v${SOURCE_COOP_VERSION}/${f}"; \
+    echo "${SOURCE_COOP_SHA256}  ${f}" | sha256sum -c -; \
+    tar -xJf "${f}"; \
+    install -m 0755 source-coop-cli-x86_64-unknown-linux-gnu/source-coop /usr/local/bin/source-coop; \
+    rm -rf "${f}" source-coop-cli-x86_64-unknown-linux-gnu
 
-# Install tools for working with Google Cloud Buckets
-RUN echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && apt-get update -y && apt-get install google-cloud-cli -y
-
-# Install AWS tools
-RUN awsv2 --install
+# Opt-in installer for tools that update themselves (Claude Code, Antigravity).
+# Users run it themselves; it installs into their home, not the image.
+RUN install -m 0755 /tmp/scripts/install-user-tools.sh /usr/local/bin/install-user-tools
 
 # Clear out files put in /tmp
 RUN rm -rf /tmp/*
