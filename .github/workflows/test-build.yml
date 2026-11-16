@@ -1,14 +1,22 @@
 name: Test build (branch -> test image)
 
-# Manual workflow for trying a change before it reaches main.
+# Test build for trying a change before it reaches main (push to `test`, or run by hand).
 # Builds the image from the chosen branch, runs the tests/test-*.ipynb notebooks
 # and package validation, and pushes ONLY to the separate test image:
 #   ghcr.io/<owner>/<repo>/test:latest and :<short sha>
 # It never pushes :latest or a version tag of the real image, never opens a
 # pins PR, and never makes a release. Use the branch picker ("Use workflow from")
 # or the `ref` input to choose what to build.
+#
+# Pushing to the `test` branch also runs it (as in py-rocket-base). Push events
+# use the workflow file from the pushed commit, so this works before the file
+# is on main:
+#   git push origin <your-branch>:test     (add --force-with-lease to replace what is there)
 
 on:
+  push:
+    branches:
+      - test
   workflow_dispatch:
     inputs:
       ref:

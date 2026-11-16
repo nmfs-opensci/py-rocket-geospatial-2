@@ -59,7 +59,7 @@ Cooperative, AWS, Google Cloud Storage).
 
   | Tool | Command | Sign in |
   |---|---|---|
-  | AWS CLI (conda-forge `awscli`) | `aws` | `aws configure` or `aws sso login`; credentials in `~/.aws` |
+  | AWS CLI v2 (conda-forge `awscli`) | `aws` | `aws configure` or `aws sso login`; credentials in `~/.aws` |
   | Google Cloud CLI | `gcloud`, `gsutil`, `bq` | `gcloud auth login` and `gcloud auth application-default login` (the second gives `gcsfs` and `rclone` credentials) |
   | Source Cooperative CLI (v0.3.0) | `source-coop` | `source-coop login --duration 1d --port 8400`, then open `/user/<name>/proxy/8400/` on the hub |
   | rclone, s5cmd | `rclone`, `s5cmd` | bulk copies to S3, GCS and Source Cooperative |
@@ -155,7 +155,8 @@ You can manually trigger the workflow with options:
 
 ### Trying a change before it reaches main
 
-**Actions → "Test build (branch -> test image)" → Run workflow**, choosing your branch.
+Push your branch to the `test` branch (`git push origin <your-branch>:test`), or use
+**Actions → "Test build (branch -> test image)" → Run workflow** and choose a branch.
 It builds the image, runs the notebook tests and package validation, and pushes only to
 `ghcr.io/nmfs-opensci/py-rocket-geospatial-2/test:latest` (and `:<short sha>`). It never
 pushes the real `:latest`, never opens a pins PR and never makes a release.
@@ -163,7 +164,7 @@ pushes the real `:latest`, never opens a pins PR and never makes a release.
 ### Workflow Files
 
 - **`.github/workflows/build-and-push.yml`** - Main workflow (build, test, push, release)
-- **`.github/workflows/test-build.yml`** - Manual build of any branch, pushed to the `test` image only
+- **`.github/workflows/test-build.yml`** - Build on push to `test` (or manual run), pushed to the `test` image only
 - **`.github/workflows/test-python.yml`** - Manual test trigger for existing images
 - **`.github/workflows/pin-packages.yml`** - Manual package validation for existing images
 

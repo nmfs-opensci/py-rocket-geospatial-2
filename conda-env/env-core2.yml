@@ -36,7 +36,7 @@ dependencies:
   - dask>=2026.1 # open_zarr(..., chunks={}) needs a chunk manager
 
   # Cloud access tools and libraries
-  - awscli # replaces awscliv2, whose `awsv2 --install` needs Docker and fails on a hub (py-rocket-base#305)
+  - awscli>=2 # AWS CLI v2 (conda-forge builds v2 under this name); replaces awscliv2, whose `awsv2 --install` needs Docker and fails on a hub (py-rocket-base#305)
   - rclone # bulk copies to S3 / GCS / Source Cooperative
   - s5cmd # fast parallel S3 copies
   - boto3

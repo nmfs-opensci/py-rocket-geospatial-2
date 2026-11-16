@@ -9,9 +9,9 @@ Rebuild on py-rocket-base 2026.11.16 (Python 3.13, R 4.6.1). Plan and decisions:
 * Removed Panoply and CoastWatch Utilities (and their `Desktop/` entries); they move to their own derivative image. Java stays in the base.
 * Removed `xarray-datatree` (DataTree is in xarray).
 * Icechunk stack folded into `env-core2.yml` with minimum versions; `obspec-utils` and `point-collocation` via pip (not on conda-forge; the latter in `env-ioos.yml`, after `cf-xarray`). Added `xoak`, `argopy`, `jupyter-cache` (#68).
-* Cloud CLIs: conda-forge `awscli` replaces `awscliv2` + `awsv2 --install` (needed Docker; py-rocket-base#305); added `rclone`, `s5cmd`; `source-coop` v0.3.0 in `/usr/local/bin` (checksum pinned); gcloud kept, installed with `--no-install-recommends` (drops the ~120 MB anthoscli package).
+* Cloud CLIs: conda-forge `awscli>=2` (AWS CLI v2, 2.38.x at the time) replaces `awscliv2` + `awsv2 --install` (needed Docker; py-rocket-base#305); added `rclone`, `s5cmd`; `source-coop` v0.3.0 in `/usr/local/bin` (checksum pinned); gcloud kept, installed with `--no-install-recommends` (drops the ~120 MB anthoscli package).
 * Claude Code and Antigravity are not in the image: `install-user-tools` (from `scripts/install-user-tools.sh`) installs them into the user's home.
-* New `test-build.yml`: manual build of a branch, pushed only to the `.../test` image.
+* New `test-build.yml`: builds on push to the `test` branch or by manual run, pushed only to the `.../test` image.
 
 ## 2026-02-13
 
