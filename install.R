@@ -110,6 +110,9 @@ list.of.packages <- c(
 )
 install.packages(list.of.packages, repos = repo)
 
+# remotes is not in py-rocket-base 2026.11.16 (it was in earlier bases), so install it here.
+install.packages("remotes", repos = repo)
+
 # TODO: Should they include upgrade=FALSE? eeh: yes to prevent the dependencies from upgrading.
 remotes::install_github("hvillalo/echogram", upgrade=FALSE)
 remotes::install_github("hvillalo/periods", upgrade=FALSE)
