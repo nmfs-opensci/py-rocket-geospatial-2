@@ -170,6 +170,16 @@ WORKDIR ${HOME}
 
 ---
 
+## AI assistance
+
+Parts of this repository were written with AI coding agents. Every change was
+reviewed by the author before it was merged, and commits made with an agent end
+with a `Co-Authored-By: Agent` line. Agent instructions and design notes are kept
+in the repository (`AGENTS.md`, `agent/`, `docs/design/`) so that reviewers, human
+or agent, can check the work against its stated intent.
+
+---
+
 ## Provenance
 
 This image was originally maintained under  
