@@ -10,7 +10,8 @@ Rolling state for agent sessions. Lean: details belong in `docs/design/`.
   removes Panoply and cwutils. Plan and decisions are in issue #69; #68 is the
   package requests it covers. Test build run 43986044579 passed build, notebook
   tests and validation. Not yet tried on a hub. The PR body has the details and
-  the list of untested items.
+  the list of untested items. Decisions and workarounds:
+  `docs/design/rebuild-py313.md`.
 - The `test` branch is a build trigger and only follows whatever is being tested
   (now `rebuild-py313-base`). Never open a PR from it.
 

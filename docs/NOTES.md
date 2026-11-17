@@ -2,7 +2,7 @@
 
 ## 2026-11-16
 
-Rebuild on py-rocket-base 2026.11.16 (Python 3.13, R 4.6.1). Plan and decisions: #69.
+Rebuild on py-rocket-base 2026.11.16 (Python 3.13, R 4.6.1). Plan and decisions: #69; reasons in `docs/design/rebuild-py313.md`.
 
 * Base `py-rocket-base:2026.11.16`; CRAN snapshot `noble/2026-10-28`; added R `zarr`, `rerddap`, `remotes` (no longer in the base). `gdalcubes` comes from the 2026-11-16 snapshot (it was off CRAN on 2026-10-28).
 * QGIS bumped to `~=3.44.0` (3.40 cannot be installed on Python 3.13).
