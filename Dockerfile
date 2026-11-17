@@ -45,7 +45,13 @@ RUN echo '.libPaths("/usr/local/lib/R/site-library")' > /etc/littler.r && \
     rm /etc/littler.r /tmp/rprofile.site
 
 # Any packages that have gdal dependency should be installed after install_geospatial.sh is run
-RUN /pyrocket_scripts/install-r-packages.sh /tmp/install.R || (echo "install-r-package.sh failed" && exit 1)
+# remotes::install_github needs a token, or GitHub's unauthenticated API limit (shared
+# by runner IPs) fails it with HTTP 403. The token comes in as a BuildKit secret, so it
+# exists only during this step and is not stored in the image or its history.
+# CI: docker build --secret id=github_pat,env=GITHUB_PAT ...  Local builds work without it.
+RUN --mount=type=secret,id=github_pat \
+    GITHUB_PAT="$(cat /run/secrets/github_pat 2>/dev/null || true)" \
+    /pyrocket_scripts/install-r-packages.sh /tmp/install.R || (echo "install-r-package.sh failed" && exit 1)
 
 # Google Cloud CLI (gcloud, gsutil, bq) from Google's apt repo.
 # --no-install-recommends drops google-cloud-cli-anthoscli (~120 MB) that apt would otherwise pull in.

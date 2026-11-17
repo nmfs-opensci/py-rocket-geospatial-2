@@ -96,12 +96,14 @@ jobs:
           echo "IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/container-images/${{ github.event.repository.name }}:${short_sha}" >> $GITHUB_ENV
 
       - name: Build the Docker image
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
           docker build . \
             -f Dockerfile \
-            --build-arg GITHUB_PAT=${{ secrets.GITHUB_TOKEN }} \
+            --secret id=github_pat,env=GITHUB_PAT \
             --tag ghcr.io/${{ github.repository_owner }}/${{ env.name }}:${{ env.tag }} \
             --tag ghcr.io/${{ github.repository_owner }}/${{ env.name }}:latest
 

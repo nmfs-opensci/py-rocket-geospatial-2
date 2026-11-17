@@ -60,11 +60,13 @@ jobs:
           echo "Building $(git rev-parse --abbrev-ref HEAD) @ ${short_sha} -> ${test_image}"
 
       - name: Build the Docker image
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
           docker build . \
             -f Dockerfile \
-            --build-arg GITHUB_PAT=${{ secrets.GITHUB_TOKEN }} \
+            --secret id=github_pat,env=GITHUB_PAT \
             --tag ${TEST_IMAGE}:${TAG} \
             --tag ${TEST_IMAGE}:latest
 

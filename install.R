@@ -115,6 +115,8 @@ install.packages(list.of.packages, repos = repo)
 
 # remotes is not in py-rocket-base 2026.11.16 (it was in earlier bases), so install it here.
 install.packages("remotes", repos = repo)
+# Logs only whether a token is present (passed as a BuildKit secret in CI), never its value.
+message("GITHUB_PAT set for install_github: ", nzchar(Sys.getenv("GITHUB_PAT")))
 
 # TODO: Should they include upgrade=FALSE? eeh: yes to prevent the dependencies from upgrading.
 remotes::install_github("hvillalo/echogram", upgrade=FALSE)
