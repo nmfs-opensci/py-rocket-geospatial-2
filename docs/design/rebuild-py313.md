@@ -65,6 +65,18 @@ itself, changes quickly, or is large but only a few people use it.
   survives the switch to `jovyan` in `install-r-packages.sh`.
   `.github/actions/build-and-push/action.yml`, the template for derivative images,
   still passes the unused `--build-arg`. That is harmless.
+- **`ENV PROJ_LIB=<conda>` stays in the Dockerfile, and R ignores it.** R must
+  use the system GDAL/PROJ, never conda's. On a hub, R started in the JupyterLab
+  terminal, where the conda env is activated, loaded conda's GDAL plugins
+  (`undefined symbol: GEOSCoverageCleanParams_setGapMaximumWidth_r`, `OPENSSL_3.4.0
+  not found`). The current `main` image has the same problem, as 50+ warnings.
+  RStudio, its terminal, R notebooks, and any shell after `conda deactivate` were
+  fine. The base fixed it in its republished 2026.11.17 (py-rocket-base#319): it
+  sets `GDAL_DATA`, `GDAL_DRIVER_PATH`, `PROJ_DATA` and `PROJ_LIB` to the system
+  paths in `Renviron.site`, which overrides values R inherits. That also covers
+  this image's `PROJ_LIB`, which is probably there for conda QGIS on the desktop
+  (not tested, so left alone). Do not point R at conda's libraries to fix a
+  missing R dependency.
 - **The test notebook searches `PACE_OCI_L3M_AOP`.** OB.DAAC folded
   `PACE_OCI_L3M_RRS` into the AOP collection with processing version 3.2. The
   old name returns 0 granules with any earthaccess version. This broke the test
