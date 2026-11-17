@@ -41,8 +41,11 @@ install.packages(list.of.packages, repos = repo)
 # ------------------------------------------------------------
 # 2) Geospatial + mapping + earth/ocean data utilities
 # ------------------------------------------------------------
+# gdalcubes was off CRAN on the 2026-10-28 snapshot date; 0.7.6 returned on
+# 2026-10-30, so take it from a later snapshot. Its deps are already installed.
+install.packages("gdalcubes", repos = "https://p3m.dev/cran/__linux__/noble/2026-11-16")
+
 list.of.packages <- c(
-  "gdalcubes",
   "rnaturalearth",
   "rnaturalearthdata",
   "PBSmapping",

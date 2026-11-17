@@ -19,13 +19,13 @@ dependencies:
 
   # Virtual / cloud-optimized stack (Icechunk). Minimum versions come from the
   # ocean-icechunks requirements files and the virtual-icechunk skill; several are
-  # needed only indirectly (see comments). obspec-utils is pip-only (see pip: below).
+  # needed only indirectly (see comments).
   - icechunk>=2.3
   - virtualizarr>=2.8
   - zarr>=3.4
   - xarray>=2026.9
   - obstore>=0.12
-  - obspec # dependency of obspec-utils; from conda-forge so pip does not fetch it
+  - obspec_utils>=0.9 # conda-forge name uses an underscore
   - kerchunk>=0.2.10
   - scipy>=1.17 # kerchunk's NetCDF-3 parser subclasses scipy's netcdf_file
   - h5py>=3.16
@@ -75,4 +75,3 @@ dependencies:
 
   - pip:
     - xq
-    - obspec-utils>=0.9 # not on conda-forge; part of the Icechunk stack
