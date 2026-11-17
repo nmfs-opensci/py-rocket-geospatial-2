@@ -23,6 +23,7 @@ on:
       - "Desktop/**"
       - "tests/**"
       - ".github/scripts/**"
+      - "scripts/**"
 
 permissions:
   contents: write
@@ -95,12 +96,14 @@ jobs:
           echo "IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/container-images/${{ github.event.repository.name }}:${short_sha}" >> $GITHUB_ENV
 
       - name: Build the Docker image
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: |
           set -euo pipefail
 
           docker build . \
             -f Dockerfile \
-            --build-arg GITHUB_PAT=${{ secrets.GITHUB_TOKEN }} \
+            --secret id=github_pat,env=GITHUB_PAT \
             --tag ghcr.io/${{ github.repository_owner }}/${{ env.name }}:${{ env.tag }} \
             --tag ghcr.io/${{ github.repository_owner }}/${{ env.name }}:latest
 
@@ -141,7 +144,7 @@ jobs:
         uses: ./.github/actions/validate-packages
         with:
           image: ${{ env.IMAGE_NAME }}
-          python_version: "3.11"
+          python_version: "3.13"
 
       - name: Set validation status
         if: env.SKIP_TESTS == 'false'

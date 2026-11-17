@@ -12,3 +12,4 @@ deliberate, workarounds, and facts from outside the repository.
 | Note | Topic |
 |---|---|
 | [env-file-split.md](env-file-split.md) | Why the conda environment is installed from several files, one after another |
+| [rebuild-py313.md](rebuild-py313.md) | Rebuild on py-rocket-base 2026.11.16 (#69, #70): what is in the image, workarounds and their evidence |

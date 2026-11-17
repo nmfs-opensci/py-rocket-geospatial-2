@@ -18,8 +18,7 @@ dependencies:
   - statsmodels
   - pymannkendall # non-parametric Mann-Kendall trend analysis
   - sympy
-  - xarray>=2024.10
-  - xarray-datatree
+  - xarray>=2024.10 # DataTree is in xarray itself, so xarray-datatree was removed
 
   # Machine Learning packages
   - py-xgboost~=2.1.1=cpu*

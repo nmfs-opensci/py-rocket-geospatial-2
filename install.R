@@ -2,7 +2,7 @@
 # install R dependencies
 
 # CRAN binaries repo (from image build)
-repo <- "https://p3m.dev/cran/__linux__/noble/2025-10-30"
+repo <- "https://p3m.dev/cran/__linux__/noble/2026-10-28"
 
 # Guardrail: don’t install into /home in the Docker build context
 install_lib <- .libPaths()[1]
@@ -33,16 +33,19 @@ list.of.packages <- c(
   "readHAC",
   "parsedate",
   "tigris",
-  "mirai"
+  "mirai",
+  "zarr"
 )
 install.packages(list.of.packages, repos = repo)
-# "zarr"  add when upgrade to R. Came out in Feb 2026
 
 # ------------------------------------------------------------
 # 2) Geospatial + mapping + earth/ocean data utilities
 # ------------------------------------------------------------
+# gdalcubes was off CRAN on the 2026-10-28 snapshot date; 0.7.6 returned on
+# 2026-10-30, so take it from a later snapshot. Its deps are already installed.
+install.packages("gdalcubes", repos = "https://p3m.dev/cran/__linux__/noble/2026-11-16")
+
 list.of.packages <- c(
-  "gdalcubes",
   "rnaturalearth",
   "rnaturalearthdata",
   "PBSmapping",
@@ -54,6 +57,7 @@ list.of.packages <- c(
   "oce",
   "ocedata",
   "plotdap",
+  "rerddap",
   "rerddapXtracto",
   "openair",
   "cmocean"
@@ -108,6 +112,11 @@ list.of.packages <- c(
   "udunits2"
 )
 install.packages(list.of.packages, repos = repo)
+
+# Logs only whether a token is present (passed as a BuildKit secret in CI), never its value.
+message("GITHUB_PAT set for install_github: ", nzchar(Sys.getenv("GITHUB_PAT")))
+# remotes comes from py-rocket-base (system library) since 2026.11.17; log where it loads from.
+message("remotes loaded from: ", find.package("remotes"))
 
 # TODO: Should they include upgrade=FALSE? eeh: yes to prevent the dependencies from upgrading.
 remotes::install_github("hvillalo/echogram", upgrade=FALSE)

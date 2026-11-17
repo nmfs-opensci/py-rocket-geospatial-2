@@ -36,7 +36,7 @@ Tests that the Python environment can:
 - Open remote NetCDF files using h5netcdf engine
 - Read data from NMFS ODP storage
 - Use earthaccess to authenticate and access NASA Earthdata
-- Search and open PACE OCI L3M RRS data
+- Search and open PACE OCI L3M AOP data (Rrs; the collection was `PACE_OCI_L3M_RRS` before v3.2)
 
 **Note**: The earthaccess test requires NASA Earthdata credentials configured via `.netrc` file (provided via GitHub secrets in CI).
 

@@ -6,7 +6,7 @@ This release provides a cloud-ready Docker image for Python–R geospatial and e
 - **Python geospatial stack** optimized for large datasets, distributed computing, and cloud-native object storage
 - **R + RStudio** with geospatial packages installed using Rocker Project scripts
 - **JupyterLab** with both Python and R kernel support
-- **Desktop environment (VNC)** for GUI-based tools such as QGIS and Panoply
+- **Desktop environment (VNC)** for GUI-based tools such as QGIS
 - **VS Code OSS** configured for scientific notebooks and Quarto
 - **Publishing toolchain** including Quarto, JupyterBook, MyST, Pandoc, and TeX Live
 - **Helper scripts** (`pyrocket_scripts`, `rocker_scripts`) to support customization and extension

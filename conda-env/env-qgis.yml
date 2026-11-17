@@ -5,5 +5,5 @@ channels:
 
 dependencies:
   # Desktop tools
-  - qgis~=3.40.0
+  - qgis~=3.44.0 # 3.40 cannot be installed on Python 3.13
   - pyopencl
