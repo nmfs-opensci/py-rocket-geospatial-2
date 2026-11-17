@@ -10,7 +10,8 @@ Rolling state for agent sessions. Lean: details belong in `docs/design/`.
   #68 still open. Decisions and workarounds: `docs/design/rebuild-py313.md`.
 - The `:latest` build of `6eac5c0` passed, and its pins came back and merged as
   #73, so `reproducibility/` matches `main`. No open PRs.
-- Release 2026.11.17 is a **draft** (made by CI); publishing it is the user's call.
+- Release 2026.11.17 published 2026-11-17 (notes have a hand-written highlights
+  section; the CI draft only lists PRs).
 - The base 2026.11.17 tag was republished on 2026-11-17 with py-rocket-base#319:
   R keeps the system GDAL/PROJ in an activated conda shell. Base #318 holds notes
   for the next Ubuntu move.
