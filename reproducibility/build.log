@@ -6,8 +6,8 @@ Packages from pangeo-notebook feedstock: 7
 Packages from pangeo-dask feedstock: 3
 Other packages from py-rocket-base: 28
 Total packages from py-rocket-base: 38
-Total unique packages in env-*.yml files: 115
-Total packages in filtered packages-python-pinned.yaml: 153
+Total unique packages in env-*.yml files: 126
+Total packages in filtered packages-python-pinned.yaml: 163
 
 STATUS: SUCCESS
 ======================================================================
@@ -31,13 +31,11 @@ Not all 900+ packages from the conda environment are included.
 R Package Validation Report
 ======================================================================
 
-Packages in install.R: 66
-Packages in /rocker_scripts/install_geospatial.sh: 32
+Packages in install.R: 67
+Packages in /rocker_scripts/install_geospatial.sh: 28
 Packages in /rocker_scripts/install_tidyverse.sh: 17
-Total unique R packages expected: 114
-Archived packages excluded from validation: 4
-  (RandomFields, maptools, rgdal, rgeos)
-Total packages in packages-r-pinned.R: 421
+Total unique R packages expected: 111
+Total packages in packages-r-pinned.R: 425
 
 STATUS: SUCCESS
 ======================================================================
@@ -47,12 +45,5 @@ install_tidyverse.sh are present in packages-r-pinned.R.
 
 The packages-r-pinned.R file contains all required packages
 from the custom install.R and the rocker scripts.
-
-Note: The following archived packages were excluded from validation
-as they are no longer available on CRAN:
-  - RandomFields (found in: install_geospatial.sh)
-  - maptools (found in: install_geospatial.sh)
-  - rgdal (found in: install_geospatial.sh)
-  - rgeos (found in: install_geospatial.sh)
 
 ======================================================================
