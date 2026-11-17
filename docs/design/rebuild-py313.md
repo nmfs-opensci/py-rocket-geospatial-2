@@ -1,4 +1,4 @@
-# Rebuild on py-rocket-base 2026.11.16 (Python 3.13, R 4.6.1)
+# Rebuild on py-rocket-base 2026.11.17 (Python 3.13, R 4.6.1)
 
 Plan and decisions: issue #69 (see its decisions comment of 2026-11-16). PR #70.
 This note records what the code alone does not explain: workarounds, choices that
@@ -40,10 +40,14 @@ itself, changes quickly, or is large but only a few people use it.
   would pull `cf-xarray` from PyPI ahead of the conda one (see
   [env-file-split.md](env-file-split.md)). #68 calls it "points-collocation";
   the package is `point-collocation` (fish-pace).
-- **`install.R` installs `remotes` itself.** py-rocket-base 2026.11.16 no longer
-  ships it, and the first test build failed with `there is no package called
-  'remotes'`. Other derivative images of the base will hit the same error, so it
-  may be worth raising in py-rocket-base.
+- **Base 2026.11.17, not 2026.11.16.** 2026.11.16 had lost the R package
+  `remotes`, so the first test build failed with `there is no package called
+  'remotes'`. `devtools` 2.5 (CRAN `noble/2026-10-28`) moved `remotes` from
+  Imports to Suggests, so it stopped arriving with rocker's
+  `install_tidyverse.sh`. `install.R` installed it as a stopgap. The base fixed
+  it in 2026.11.17 (py-rocket-base#316, #317), which installs it into R's system
+  library, and the stopgap was removed (#72). Do not add it back to `install.R`:
+  a second copy in the site-library would hide the base's copy.
 - **`gdalcubes` comes from the 2026-11-16 snapshot.** Every other R package uses
   the 2026-10-28 snapshot, which matches the base. gdalcubes was off CRAN on
   2026-10-28 ("not available for this version of R") and came back as 0.7.6 on

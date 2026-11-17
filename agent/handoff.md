@@ -6,7 +6,7 @@ Rolling state for agent sessions. Lean: details belong in `docs/design/`.
 
 - `main` is the image on py-rocket-base 2026.02.12 (Python 3.11, R 4.5.1).
 - **Open: PR #70** (`rebuild-py313-base`, draft). Rebuilds on py-rocket-base
-  2026.11.16 (Python 3.13, R 4.6.1), adds the Icechunk stack and cloud CLIs, and
+  2026.11.17 (Python 3.13, R 4.6.1), adds the Icechunk stack and cloud CLIs, and
   removes Panoply and cwutils. Plan and decisions are in issue #69; #68 is the
   package requests it covers. Test build run 43986044579 passed build, notebook
   tests and validation. Not yet tried on a hub. The PR body has the details and

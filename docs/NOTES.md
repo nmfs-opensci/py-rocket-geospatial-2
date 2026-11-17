@@ -1,10 +1,10 @@
 # Changes
 
-## 2026-11-16
+## 2026-11-17
 
-Rebuild on py-rocket-base 2026.11.16 (Python 3.13, R 4.6.1). Plan and decisions: #69; reasons in `docs/design/rebuild-py313.md`.
+Rebuild on py-rocket-base 2026.11.17 (Python 3.13, R 4.6.1). Plan and decisions: #69; reasons in `docs/design/rebuild-py313.md`.
 
-* Base `py-rocket-base:2026.11.16`; CRAN snapshot `noble/2026-10-28`; added R `zarr`, `rerddap`, `remotes` (no longer in the base). `gdalcubes` comes from the 2026-11-16 snapshot (it was off CRAN on 2026-10-28).
+* Base `py-rocket-base:2026.11.17` (2026.11.16 plus R `remotes`, py-rocket-base#316); CRAN snapshot `noble/2026-10-28`; added R `zarr`, `rerddap`. `gdalcubes` comes from the 2026-11-16 snapshot (it was off CRAN on 2026-10-28).
 * QGIS bumped to `~=3.44.0` (3.40 cannot be installed on Python 3.13).
 * Removed Panoply and CoastWatch Utilities (and their `Desktop/` entries); they move to their own derivative image. Java stays in the base.
 * Removed `xarray-datatree` (DataTree is in xarray).
